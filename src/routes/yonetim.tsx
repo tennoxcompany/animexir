@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { fetchAnimes, GENRES } from "@/lib/data";
+import { AniListImport } from "@/components/AniListImport";
 
 export const Route = createFileRoute("/yonetim")({
   head: () => ({
@@ -68,6 +69,7 @@ function Admin() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-10">
+      <AniListImport onDone={refresh} />
       <h1 className="text-3xl font-bold">Yönetici Paneli</h1>
 
       <section className="grid gap-6 md:grid-cols-2">
