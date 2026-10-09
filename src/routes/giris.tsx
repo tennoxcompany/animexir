@@ -1,0 +1,72 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/auth";
+
+export const Route = createFileRoute("/giris")({
+  head: () => ({
+    meta: [
+      { title: "Giriş Yap — AnimeXir" },
+      { name: "description", content: "AnimeXir hesabına giriş yap veya ücretsiz kayıt ol." },
+      { property: "og:title", content: "Giriş Yap — AnimeXir" },
+      { property: "og:description", content: "AnimeXir hesabına giriş yap veya kayıt ol." },
+    ],
+  }),
+  component: Login,
+});
+
+function Login() {
+  const [mode, setMode] = useState<"in" | "up">("in");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [busy, setBusy] = useState(false);
+  const { userId } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => { if (userId) navigate({ to: "/profil" }); }, [userId, navigate]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    if (mode === "in") {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) toast.error("E-posta veya şifre hatalı");
+    } else {
+      const { error } = await supabase.auth.signUp({
+        email, password,
+        options: { emailRedirectTo: window.location.origin, data: { username } },
+      });
+      if (error) toast.error(error.message);
+      else toast.success("Kayıt tamam! E-postana gelen bağlantıyla hesabını doğrula.");
+    }
+    setBusy(false);
+  };
+
+  const google = async () => {
+    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (r.error) toast.error("Google ile giriş başarısız");
+  };
+
+  return (
+    <div className="mx-auto flex max-w-md flex-col px-4 py-20">
+      <h1 className="text-3xl font-bold">{mode === "in" ? "Tekrar hoş geldin" : "AnimeXir'e katıl"}</h1>
+      <p className="mt-1 text-muted-foreground">Listeni, yorumlarını ve izleme odalarını kaydet.</p>
+      <Button variant="glass" className="mt-8 h-11" onClick={google}>Google ile devam et</Button>
+      <div className="my-6 text-center text-xs text-muted-foreground">veya</div>
+      <form onSubmit={submit} className="space-y-3">
+        {mode === "up" && <Input required placeholder="Kullanıcı adı" value={username} onChange={(e) => setUsername(e.target.value)} />}
+        <Input required type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input required type="password" minLength={6} placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Button type="submit" variant="hero" className="h-11 w-full" disabled={busy}>{mode === "in" ? "Giriş Yap" : "Kayıt Ol"}</Button>
+      </form>
+      <button className="mt-4 text-sm text-muted-foreground hover:text-foreground" onClick={() => setMode(mode === "in" ? "up" : "in")}>
+        {mode === "in" ? "Hesabın yok mu? Kayıt ol" : "Zaten hesabın var mı? Giriş yap"}
+      </button>
+    </div>
+  );
+}
