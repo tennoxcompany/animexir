@@ -10,18 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BirlikteIzleRouteImport } from './routes/birlikte-izle'
 import { Route as GirisRouteImport } from './routes/giris'
+import { Route as ProfilRouteImport } from './routes/profil'
+import { Route as ToplulukRouteImport } from './routes/topluluk'
+import { Route as YonetimRouteImport } from './routes/yonetim'
 import { Route as AnimeIdRouteImport } from './routes/anime.$id'
 import { Route as IzleEpisodeIdRouteImport } from './routes/izle.$episodeId'
+import { Route as OdaCodeRouteImport } from './routes/oda.$code'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BirlikteIzleRoute = BirlikteIzleRouteImport.update({
+  id: '/birlikte-izle',
+  path: '/birlikte-izle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GirisRoute = GirisRouteImport.update({
   id: '/giris',
   path: '/giris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilRoute = ProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToplulukRoute = ToplulukRouteImport.update({
+  id: '/topluluk',
+  path: '/topluluk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const YonetimRoute = YonetimRouteImport.update({
+  id: '/yonetim',
+  path: '/yonetim',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnimeIdRoute = AnimeIdRouteImport.update({
@@ -34,39 +59,92 @@ const IzleEpisodeIdRoute = IzleEpisodeIdRouteImport.update({
   path: '/izle/$episodeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OdaCodeRoute = OdaCodeRouteImport.update({
+  id: '/oda/$code',
+  path: '/oda/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
+  '/profil': typeof ProfilRoute
+  '/topluluk': typeof ToplulukRoute
+  '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
   '/izle/$episodeId': typeof IzleEpisodeIdRoute
+  '/oda/$code': typeof OdaCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
+  '/profil': typeof ProfilRoute
+  '/topluluk': typeof ToplulukRoute
+  '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
   '/izle/$episodeId': typeof IzleEpisodeIdRoute
+  '/oda/$code': typeof OdaCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
+  '/profil': typeof ProfilRoute
+  '/topluluk': typeof ToplulukRoute
+  '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
   '/izle/$episodeId': typeof IzleEpisodeIdRoute
+  '/oda/$code': typeof OdaCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/giris' | '/anime/$id' | '/izle/$episodeId'
+  fullPaths:
+    | '/'
+    | '/birlikte-izle'
+    | '/giris'
+    | '/profil'
+    | '/topluluk'
+    | '/yonetim'
+    | '/anime/$id'
+    | '/izle/$episodeId'
+    | '/oda/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/giris' | '/anime/$id' | '/izle/$episodeId'
-  id: '__root__' | '/' | '/giris' | '/anime/$id' | '/izle/$episodeId'
+  to:
+    | '/'
+    | '/birlikte-izle'
+    | '/giris'
+    | '/profil'
+    | '/topluluk'
+    | '/yonetim'
+    | '/anime/$id'
+    | '/izle/$episodeId'
+    | '/oda/$code'
+  id:
+    | '__root__'
+    | '/'
+    | '/birlikte-izle'
+    | '/giris'
+    | '/profil'
+    | '/topluluk'
+    | '/yonetim'
+    | '/anime/$id'
+    | '/izle/$episodeId'
+    | '/oda/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BirlikteIzleRoute: typeof BirlikteIzleRoute
   GirisRoute: typeof GirisRoute
+  ProfilRoute: typeof ProfilRoute
+  ToplulukRoute: typeof ToplulukRoute
+  YonetimRoute: typeof YonetimRoute
   AnimeIdRoute: typeof AnimeIdRoute
   IzleEpisodeIdRoute: typeof IzleEpisodeIdRoute
+  OdaCodeRoute: typeof OdaCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,11 +156,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/birlikte-izle': {
+      id: '/birlikte-izle'
+      path: '/birlikte-izle'
+      fullPath: '/birlikte-izle'
+      preLoaderRoute: typeof BirlikteIzleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/giris': {
       id: '/giris'
       path: '/giris'
       fullPath: '/giris'
       preLoaderRoute: typeof GirisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profil': {
+      id: '/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof ProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/topluluk': {
+      id: '/topluluk'
+      path: '/topluluk'
+      fullPath: '/topluluk'
+      preLoaderRoute: typeof ToplulukRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/yonetim': {
+      id: '/yonetim'
+      path: '/yonetim'
+      fullPath: '/yonetim'
+      preLoaderRoute: typeof YonetimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/anime/$id': {
@@ -99,14 +205,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IzleEpisodeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/oda/$code': {
+      id: '/oda/$code'
+      path: '/oda/$code'
+      fullPath: '/oda/$code'
+      preLoaderRoute: typeof OdaCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BirlikteIzleRoute: BirlikteIzleRoute,
   GirisRoute: GirisRoute,
+  ProfilRoute: ProfilRoute,
+  ToplulukRoute: ToplulukRoute,
+  YonetimRoute: YonetimRoute,
   AnimeIdRoute: AnimeIdRoute,
   IzleEpisodeIdRoute: IzleEpisodeIdRoute,
+  OdaCodeRoute: OdaCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
