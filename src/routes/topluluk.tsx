@@ -30,7 +30,7 @@ type M = { id: string; body: string; user_id: string; created_at: string; profil
 
 function Community() {
   const { userId, isAdmin } = useAuth();
-  const [ch, setCh] = useState(CHANNELS[0].id);
+  const [ch, setCh] = useState(CHANNELS[0]!.id);
   const [msgs, setMsgs] = useState<M[]>([]);
   const [text, setText] = useState("");
   const end = useRef<HTMLDivElement>(null);
