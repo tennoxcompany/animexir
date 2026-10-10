@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       animes: {
         Row: {
+          anilist_id: number | null
           banner_url: string | null
           cover_url: string | null
           created_at: string
@@ -30,6 +31,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          anilist_id?: number | null
           banner_url?: string | null
           cover_url?: string | null
           created_at?: string
@@ -44,6 +46,7 @@ export type Database = {
           title: string
         }
         Update: {
+          anilist_id?: number | null
           banner_url?: string | null
           cover_url?: string | null
           created_at?: string
