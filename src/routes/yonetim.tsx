@@ -110,7 +110,7 @@ function Admin() {
             <Input type="number" placeholder="No" value={ep.number} onChange={(e) => setEp({ ...ep, number: e.target.value })} />
             <Input placeholder="Bölüm başlığı" value={ep.title} onChange={(e) => setEp({ ...ep, title: e.target.value })} />
           </div>
-          <Input placeholder="Video bağlantısı (.mp4)" value={ep.video_url} onChange={(e) => setEp({ ...ep, video_url: e.target.value })} />
+          <Input placeholder="Video bağlantısı (.mp4 veya gömme/embed linki)" value={ep.video_url} onChange={(e) => setEp({ ...ep, video_url: e.target.value })} />
           <Button variant="hero" onClick={addEp}>Kaydet</Button>
           <div className="max-h-64 space-y-1 overflow-y-auto pt-2">
             {eps.data?.map((e) => (
@@ -122,6 +122,40 @@ function Admin() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-border bg-card p-6">
+        <h2 className="text-xl font-bold">Toplu video linki ekle</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Anime seç, tüm bölümler listelenir; her bölüme video linkini yapıştırıp kaydet. .mp4 linki doğrudan oynar, diğer linkler gömme oynatıcıda açılır.</p>
+        <select className={`${sel} mt-3`} value={bulkId} onChange={(e) => setBulkId(e.target.value)}>
+          <option value="">Anime seç</option>
+          {animes.data?.map((a) => <option key={a.id} value={a.id}>{a.title}</option>)}
+        </select>
+        <div className="mt-4 space-y-2">
+          {bulkEps.data?.map((e) => (
+            <div key={e.id} className="flex items-center gap-2">
+              <span className="w-10 shrink-0 text-sm font-bold">{e.number}.</span>
+              <Input
+                placeholder="Video linki"
+                value={links[e.id] ?? e.video_url ?? ""}
+                onChange={(ev) => setLinks({ ...links, [e.id]: ev.target.value })}
+              />
+              <Button size="sm" variant={e.video_url ? "glass" : "hero"} disabled={saving === e.id}
+                onClick={async () => {
+                  setSaving(e.id);
+                  const url = (links[e.id] ?? e.video_url ?? "").trim();
+                  const { error } = await supabase.from("episodes").update({ video_url: url || null }).eq("id", e.id);
+                  setSaving(null);
+                  if (error) return toast.error(error.message);
+                  toast.success(`${e.number}. bölüm kaydedildi`);
+                  bulkEps.refetch(); refresh();
+                }}>
+                {saving === e.id ? "..." : "Kaydet"}
+              </Button>
+            </div>
+          ))}
+          {bulkId && bulkEps.data?.length === 0 && <p className="text-sm text-muted-foreground">Bu animede bölüm yok.</p>}
         </div>
       </section>
 

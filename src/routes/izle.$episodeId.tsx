@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
 
