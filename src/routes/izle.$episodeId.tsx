@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
-import { VideoPlayer } from "@/components/VideoPlayer";
+import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
 
@@ -75,13 +75,15 @@ function WatchPage() {
         <p className="mb-3 text-sm text-muted-foreground">
           <Link to="/anime/$id" params={{ id: ep.anime_id }} className="hover:text-primary">{ep.animes.title}</Link> › {ep.number}. Bölüm
         </p>
-        <div className="aspect-video overflow-hidden rounded-xl bg-card">
-          {ep.video_url ? (
+        {ep.video_url ? (
+          <div className="aspect-video overflow-hidden rounded-xl bg-card">
             <VideoPlayer k={ep.id} url={ep.video_url} title={`${ep.animes.title} ${ep.number}. Bölüm`} />
-          ) : (
-            <div className="flex h-full items-center justify-center text-muted-foreground">Bu bölüm yakında eklenecek.</div>
-          )}
-        </div>
+          </div>
+        ) : ep.animes.anilist_id ? (
+          <EmbedPlayer anilistId={ep.animes.anilist_id} episode={ep.number} title={`${ep.animes.title} ${ep.number}. Bölüm`} />
+        ) : (
+          <div className="flex aspect-video items-center justify-center rounded-xl bg-card text-muted-foreground">Bu bölüm yakında eklenecek.</div>
+        )}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold">{ep.animes.title}</h1>

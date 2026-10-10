@@ -27,6 +27,7 @@ export function AniListImport({ onDone }: { onDone: () => void }) {
     const season = trSeason(a.season, a.seasonYear);
     const { data: anime, error } = await supabase.from("animes").insert({
       title,
+      anilist_id: a.id,
       cover_url: a.coverImage.extraLarge || a.coverImage.large,
       banner_url: a.bannerImage || a.coverImage.extraLarge,
       description: cleanDesc(a.description),
