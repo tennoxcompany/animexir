@@ -33,6 +33,13 @@ function Admin() {
   const [editId, setEditId] = useState<string | null>(null);
   const [selected, setSelected] = useState<string>("");
   const [ep, setEp] = useState({ number: "", title: "", video_url: "" });
+  const [bulkId, setBulkId] = useState<string>("");
+  const [links, setLinks] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState<string | null>(null);
+  const bulkEps = useQuery({
+    queryKey: ["bulk-eps", bulkId], enabled: !!bulkId,
+    queryFn: async () => (await supabase.from("episodes").select("*").eq("anime_id", bulkId).order("number")).data ?? [],
+  });
 
   const eps = useQuery({
     queryKey: ["admin-eps", selected], enabled: !!selected,
