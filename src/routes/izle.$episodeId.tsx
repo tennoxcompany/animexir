@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
 
@@ -76,7 +77,7 @@ function WatchPage() {
         </p>
         <div className="aspect-video overflow-hidden rounded-xl bg-card">
           {ep.video_url ? (
-            <video key={ep.id} src={ep.video_url} controls autoPlay className="h-full w-full" />
+            <VideoPlayer k={ep.id} url={ep.video_url} title={`${ep.animes.title} ${ep.number}. Bölüm`} />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground">Bu bölüm yakında eklenecek.</div>
           )}
