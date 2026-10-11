@@ -8,9 +8,9 @@ type Server = { name: string; tag: string; url: (anilistId: number, ep: number) 
 
 /** Embed servers keyed by AniList media id — used when the episode has no manual video link. */
 export const EMBED_SERVERS: Server[] = [
-  { name: "Sunucu 1 (Videasy)", tag: "HD / Hızlı", url: (id, ep) => `https://videasy.net/anime/${id}/${ep}?progress=true` },
-  { name: "Sunucu 2 (VidSrc)", tag: "Popüler", url: (id, ep) => `https://vidsrc.cc/v2/embed/anime/ani${id}/${ep}/sub` },
-  { name: "Sunucu 3 (VidSrc v3)", tag: "Stabil", url: (id, ep) => `https://vidsrc.cc/v3/embed/anime/ani${id}/${ep}/sub` },
+  { name: "Sunucu 1 (Vidy)", tag: "HD / Hızlı", url: (id, ep) => `https://vidy.st/anime/${id}/${ep}?autoplay=true` },
+  { name: "Sunucu 2 (AniEmbed)", tag: "Stabil", url: (id, ep) => `https://aniembed.se/e/${id}/${ep}?lang=sub&autoplay=1` },
+  { name: "Sunucu 3 (VidSrc)", tag: "Yedek", url: (id, ep) => `https://vidsrc-embed.ru/embed/anime/ani${id}/${ep}/sub` },
 ];
 
 export function VideoPlayer({ url, title, k }: { url: string; title: string; k: string }) {
