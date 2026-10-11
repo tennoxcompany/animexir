@@ -62,6 +62,17 @@ export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; 
             <span className={`rounded px-1.5 py-0.5 text-[10px] ${i === srv ? "bg-black/20" : "bg-background"}`}>{sv.tag}</span>
           </button>
         ))}
+        <a
+          href={s.url(anilistId, episode)}
+          target="_blank"
+          rel="noreferrer"
+          className="ml-auto text-xs font-medium text-primary hover:underline"
+        >
+          Yeni sekmede aç ↗
+        </a>
+        <p className="w-full text-xs text-muted-foreground">
+          "Bağlanmayı reddetti" / "IP adresine bağlanılamadı" görürsen başka sunucuya geç. Hepsinde oluyorsa internet sağlayıcın bu siteleri engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
+        </p>
       </div>
     </div>
   );
