@@ -9,7 +9,7 @@ type Server = { name: string; tag: string; url: (anilistId: number, ep: number) 
 /** Embed servers keyed by AniList media id — used when the episode has no manual video link. */
 export const EMBED_SERVERS: Server[] = [
   { name: "Sunucu 1 (VidSrc)", tag: "HD / Hızlı", url: (id, ep) => `https://vidsrc-embed.ru/embed/anime/ani${id}/${ep}/sub` },
-  { name: "Sunucu 2 (VidSrc v3)", tag: "Stabil", url: (id, ep) => `https://vidsrc-embed.ru/embed/anime/ani${id}/${ep}/dub` },
+  { name: "Sunucu 2 (Dublaj)", tag: "Dub", url: (id, ep) => `https://vidsrc-embed.ru/embed/anime/ani${id}/${ep}/dub` },
   { name: "Sunucu 3 (VidSrc.me)", tag: "Yedek", url: (id, ep) => `https://vidsrc.me/embed/anime?ani=${id}&e=${ep}` },
 ];
 
