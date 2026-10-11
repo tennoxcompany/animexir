@@ -8,9 +8,10 @@ type Server = { name: string; tag: string; url: (anilistId: number, ep: number) 
 
 /** Embed servers keyed by AniList media id — used when the episode has no manual video link. */
 export const EMBED_SERVERS: Server[] = [
-  { name: "Sunucu 1 (Vidy)", tag: "HD / Hızlı", url: (id, ep) => `https://vidy.st/anime/${id}/${ep}?autoplay=true` },
-  { name: "Sunucu 2 (AniEmbed)", tag: "Stabil", url: (id, ep) => `https://aniembed.se/e/${id}/${ep}?lang=sub&autoplay=1` },
-  { name: "Sunucu 3 (VidSrc)", tag: "Yedek", url: (id, ep) => `https://vidsrc-embed.ru/embed/anime/ani${id}/${ep}/sub` },
+  { name: "Sunucu 1 (Vidy)", tag: "HD / Hızlı", url: (id, ep) => `https://www.vidy.st/anime/${id}/${ep}?autoplay=true` },
+  { name: "Sunucu 2 (Videasy)", tag: "Stabil", url: (id, ep) => `https://player.videasy.to/anime/${id}/${ep}` },
+  { name: "Sunucu 3 (VidLink)", tag: "Yedek", url: (id, ep) => `https://vidlink.pro/anime/${id}/${ep}/sub` },
+  { name: "Sunucu 4 (VidSrc)", tag: "Alternatif", url: (id, ep) => `https://vidsrc.sh/embed/anime/ani${id}/${ep}/sub` },
 ];
 
 export function VideoPlayer({ url, title, k }: { url: string; title: string; k: string }) {
@@ -61,6 +62,17 @@ export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; 
             <span className={`rounded px-1.5 py-0.5 text-[10px] ${i === srv ? "bg-black/20" : "bg-background"}`}>{sv.tag}</span>
           </button>
         ))}
+        <a
+          href={s.url(anilistId, episode)}
+          target="_blank"
+          rel="noreferrer"
+          className="ml-auto text-xs font-medium text-primary hover:underline"
+        >
+          Yeni sekmede aç ↗
+        </a>
+        <p className="w-full text-xs text-muted-foreground">
+          "Bağlanmayı reddetti" / "IP adresine bağlanılamadı" görürsen başka sunucuya geç. Hepsinde oluyorsa internet sağlayıcın bu siteleri engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
+        </p>
       </div>
     </div>
   );
