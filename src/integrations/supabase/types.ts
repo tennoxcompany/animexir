@@ -170,24 +170,30 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accent_color: string | null
           avatar_url: string | null
           badge: string | null
+          banner_url: string | null
           bio: string | null
           created_at: string
           id: string
           username: string
         }
         Insert: {
+          accent_color?: string | null
           avatar_url?: string | null
           badge?: string | null
+          banner_url?: string | null
           bio?: string | null
           created_at?: string
           id: string
           username?: string
         }
         Update: {
+          accent_color?: string | null
           avatar_url?: string | null
           badge?: string | null
+          banner_url?: string | null
           bio?: string | null
           created_at?: string
           id?: string
