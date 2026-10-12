@@ -28,6 +28,28 @@ const TABS = [
   { v: "dropped", l: "Bıraktım" }, { v: "history", l: "Geçmiş" }, { v: "edit", l: "Düzenle" },
 ] as const;
 const BADGES = ["AnimeXir Üyesi", "Anime Sever ⚡", "Otaku Ustası 🎌", "Efsanevi Büyücü ✨", "Korsan Kralı 🏴‍☠️", "Hokage Adayı 🍥", "Gölge Hükümdarı 👑", "Özel Seviye Avcı ⚡"];
+const ACCENTS = [
+  { name: "Kırmızı", value: "#e11d48" }, { name: "Turuncu", value: "#f97316" }, { name: "Altın", value: "#eab308" },
+  { name: "Yeşil", value: "#22c55e" }, { name: "Mavi", value: "#3b82f6" }, { name: "Mor", value: "#a855f7" }, { name: "Pembe", value: "#ec4899" },
+];
+
+/** Görseli küçültüp data URL'e çevirir (depolamaya gerek kalmadan profile kaydedilir). */
+function fileToDataUrl(file: File, maxW: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(img.src);
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
 
 function ProfilePage() {
   const { userId, profile, isAdmin, loading, refreshProfile, session } = useAuth();
