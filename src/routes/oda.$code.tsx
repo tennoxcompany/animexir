@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
+import { EmbedPlayer } from "@/components/VideoPlayer";
 
 export const Route = createFileRoute("/oda/$code")({
   head: () => ({
@@ -37,7 +38,7 @@ function Room() {
 
   const { data: room, isLoading } = useQuery({
     queryKey: ["room", code],
-    queryFn: async () => (await supabase.from("rooms").select("*, episodes(*, animes(title))").eq("code", code).maybeSingle()).data,
+    queryFn: async () => (await supabase.from("rooms").select("*, episodes(*, animes(title, anilist_id))").eq("code", code).maybeSingle()).data,
   });
   const isHost = !!room && room.host_id === userId;
 
@@ -126,16 +127,20 @@ function Room() {
             <Button variant="outline" onClick={close}>{isHost ? "Odayı Kapat" : "Ayrıl"}</Button>
           </div>
         </div>
-        <div className="relative aspect-video overflow-hidden rounded-xl bg-card">
+        <div className={`relative overflow-hidden rounded-xl bg-card ${ep?.video_url || !ep?.animes?.anilist_id ? "aspect-video" : ""}`}>
           {ep?.video_url ? (
             <video ref={video} src={ep.video_url} controls={isHost} className="h-full w-full"
               onPlay={hostEvent} onPause={hostEvent} onSeeked={hostEvent} />
+          ) : ep?.animes?.anilist_id ? (
+            <EmbedPlayer anilistId={ep.animes.anilist_id} episode={ep.number} title={room.title} />
           ) : <div className="flex h-full items-center justify-center text-muted-foreground">Bu bölümün videosu henüz yok.</div>}
           {floats.map((f) => (
             <span key={f.id} className="pointer-events-none absolute bottom-6 animate-out fade-out slide-out-to-top-40 text-4xl duration-2000" style={{ left: `${f.x}%` }}>{f.e}</span>
           ))}
         </div>
-        {!isHost && <p className="mt-2 text-xs text-muted-foreground">Oynatma oda kurucusu tarafından kontrol ediliyor. Ses için videoya tıkla.</p>}
+        {ep?.video_url
+          ? !isHost && <p className="mt-2 text-xs text-muted-foreground">Oynatma oda kurucusu tarafından kontrol ediliyor. Ses için videoya tıkla.</p>
+          : <p className="mt-2 text-xs text-muted-foreground">Herkes aynı sunucuyu seçip sohbetten "3-2-1" sayarak aynı anda oynat'a bassın.</p>}
         <div className="mt-4 flex gap-2">
           {EMOJIS.map((e) => <button key={e} onClick={() => react(e)} className="rounded-lg bg-secondary px-3 py-2 text-xl transition-transform hover:scale-110">{e}</button>)}
         </div>
