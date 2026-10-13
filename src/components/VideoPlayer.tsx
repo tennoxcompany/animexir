@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ShieldCheck, Zap } from "lucide-react";
 
 /** Direct .mp4/.webm/.m3u8 links use the native player; anything else (embed pages) uses an iframe. */
 const DIRECT = /\.(mp4|webm|ogg|mov|m3u8)(\?|$)/i;
@@ -32,21 +32,34 @@ export function VideoPlayer({ url, title, k }: { url: string; title: string; k: 
   );
 }
 
+/** Sandbox without allow-popups blocks the ad tabs embed servers open; some servers refuse to play inside it. */
+const AD_SANDBOX = "allow-scripts allow-same-origin allow-presentation allow-forms";
+const AD_KEY = "axr-adblock";
+
 /** Player with server switcher for AniList-based embeds (no manual link needed). */
 export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; episode: number; title: string }) {
   const [srv, setSrv] = useState(0);
+  const [adBlock, setAdBlock] = useState(true);
+  useEffect(() => {
+    if (localStorage.getItem(AD_KEY) === "off") setAdBlock(false);
+  }, []);
+  const toggleAd = () => {
+    const next = !adBlock;
+    setAdBlock(next);
+    localStorage.setItem(AD_KEY, next ? "on" : "off");
+  };
   const s = EMBED_SERVERS[srv]!;
   return (
     <div>
       <div className="aspect-video overflow-hidden rounded-t-xl bg-black">
         <iframe
-          key={`${srv}-${episode}`}
+          key={`${srv}-${episode}-${adBlock ? "a" : "n"}`}
           src={s.url(anilistId, episode)}
           title={title}
           className="h-full w-full"
           allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
           allowFullScreen
-          referrerPolicy="no-referrer"
+          {...(adBlock ? { sandbox: AD_SANDBOX } : {})}
         />
       </div>
       <div className="flex flex-wrap items-center gap-2 rounded-b-xl border border-t-0 border-border bg-card p-3">
@@ -71,6 +84,21 @@ export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; 
         >
           Yeni sekmede aç ↗
         </a>
+        <div className="flex w-full items-center gap-3 rounded-lg bg-secondary/60 p-2">
+          <button
+            onClick={toggleAd}
+            className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+              adBlock ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground"
+            }`}
+          >
+            <ShieldCheck className="h-4 w-4" /> Reklam engelleyici: {adBlock ? "Açık" : "Kapalı"}
+          </button>
+          <span className="text-xs text-muted-foreground">
+            {adBlock
+              ? "\"Disable sandbox\" hatası çıkarsa önce başka sunucu dene, olmazsa bunu kapat."
+              : "Kapalıyken tuşlara basınca reklam sayfası açılabilir — geri tuşuyla dön."}
+          </span>
+        </div>
         <p className="w-full text-xs text-muted-foreground">
           "Bağlanmayı reddetti" / "IP adresine bağlanılamadı" görürsen başka sunucuya geç. Hepsinde oluyorsa internet sağlayıcın bu siteleri engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
         </p>
