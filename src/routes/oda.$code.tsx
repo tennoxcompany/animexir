@@ -132,7 +132,7 @@ function Room() {
             <video ref={video} src={ep.video_url} controls={isHost} className="h-full w-full"
               onPlay={hostEvent} onPause={hostEvent} onSeeked={hostEvent} />
           ) : ep?.animes?.anilist_id ? (
-            <EmbedPlayer anilistId={ep.animes.anilist_id} episode={ep.number} title={room.title} />
+            <EmbedPlayer anilistId={ep.animes.anilist_id} episode={ep.number} title={room.title ?? ""} />
           ) : <div className="flex h-full items-center justify-center text-muted-foreground">Bu bölümün videosu henüz yok.</div>}
           {floats.map((f) => (
             <span key={f.id} className="pointer-events-none absolute bottom-6 animate-out fade-out slide-out-to-top-40 text-4xl duration-2000" style={{ left: `${f.x}%` }}>{f.e}</span>
