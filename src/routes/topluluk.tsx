@@ -34,6 +34,7 @@ function Community() {
   const [msgs, setMsgs] = useState<M[]>([]);
   const [text, setText] = useState("");
   const end = useRef<HTMLDivElement>(null);
+  const lastSent = useRef(0);
 
   useEffect(() => {
     const sel = "*, profiles(username, avatar_url, badge)";
@@ -55,6 +56,8 @@ function Community() {
     e.preventDefault();
     if (!userId) return toast.error("Mesaj için giriş yap");
     if (!text.trim()) return;
+    if (!isAdmin && Date.now() - lastSent.current < 2000) return toast.error("Yavaşla! 2 saniyede bir mesaj atabilirsin.");
+    lastSent.current = Date.now();
     const { error } = await supabase.from("community_messages").insert({ channel: ch, user_id: userId, body: text.trim() });
     if (error) toast.error(error.message); else setText("");
   };
