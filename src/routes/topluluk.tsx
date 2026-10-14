@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -84,9 +85,9 @@ function Community() {
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {msgs.map((m) => (
             <div key={m.id} className="group flex gap-3">
-              <Avatar url={m.profiles?.avatar_url} name={m.profiles?.username} />
+              <Link to="/kullanici/$id" params={{ id: m.user_id }}><Avatar url={m.profiles?.avatar_url} name={m.profiles?.username} /></Link>
               <div className="min-w-0 flex-1">
-                <p className="text-sm"><b>{m.profiles?.username}</b> <span className="text-xs text-gold">{m.profiles?.badge}</span> <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span></p>
+                <p className="text-sm"><Link to="/kullanici/$id" params={{ id: m.user_id }} className="font-bold hover:text-primary">{m.profiles?.username}</Link> <span className="text-xs text-gold">{m.profiles?.badge}</span> <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span></p>
                 <p className="break-words text-sm text-muted-foreground">{m.body}</p>
               </div>
               {(m.user_id === userId || isAdmin) && (

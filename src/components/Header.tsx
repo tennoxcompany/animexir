@@ -28,12 +28,15 @@ export function Header() {
             <Link to="/yonetim" className="rounded-md px-3 py-2 text-sm text-gold" >Yönetim</Link>
           )}
         </nav>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
           {userId ? (
+            <>
+            <NotificationBell userId={userId} />
             <Link to="/profil" className="flex items-center gap-2">
               <span className="hidden text-sm sm:block">{profile?.username}</span>
               <Avatar url={profile?.avatar_url} name={profile?.username} />
             </Link>
+            </>
           ) : (
             <Button asChild variant="hero" size="sm"><Link to="/giris">Giriş Yap</Link></Button>
           )}
