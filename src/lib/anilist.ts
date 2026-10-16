@@ -13,12 +13,13 @@ export type AniResult = {
   format: string | null;
   studios: { nodes: { name: string }[] };
   streamingEpisodes: { title: string | null }[];
+  nextAiringEpisode: { episode: number } | null;
 };
 
 const QUERY = `query ($s: String) { Page(perPage: 12) { media(search: $s, type: ANIME, sort: SEARCH_MATCH) {
   id title { romaji english } coverImage { extraLarge large } bannerImage description(asHtml: false)
   genres averageScore episodes status season seasonYear format
-  studios(isMain: true) { nodes { name } } streamingEpisodes { title } } } }`;
+  studios(isMain: true) { nodes { name } } streamingEpisodes { title } nextAiringEpisode { episode } } } }`;
 
 export async function searchAniList(s: string): Promise<AniResult[]> {
   const r = await fetch("https://graphql.anilist.co", {
@@ -45,6 +46,24 @@ const SEASON_TR: Record<string, string> = { WINTER: "Kış", SPRING: "İlkbahar"
 export const trSeason = (s: string | null, y: number | null) => [s ? SEASON_TR[s] : null, y].filter(Boolean).join(" ");
 
 export const cleanDesc = (d: string | null) => (d ?? "").replace(/<[^>]+>/g, "").replace(/\(Source:.*?\)/gi, "").trim();
+
+/**
+ * Eklenecek bölüm sayısı.
+ * - Bitmiş animelerde AniList `episodes` alanı toplam bölümü verir.
+ * - Devam eden animelerde (One Piece gibi) `episodes` boş gelir; o zaman
+ *   "bir sonraki yayınlanacak bölüm - 1" = şu ana kadar yayınlanan bölüm sayısıdır.
+ * - Hiçbiri yoksa streamingEpisodes içindeki en büyük bölüm numarasına bakılır.
+ */
+export function episodeCount(a: AniResult): number {
+  if (a.episodes && a.episodes > 0) return a.episodes;
+  if (a.nextAiringEpisode?.episode) return Math.max(0, a.nextAiringEpisode.episode - 1);
+  let max = 0;
+  for (const e of a.streamingEpisodes ?? []) {
+    const m = e.title?.match(/Episode\s+(\d+)/i);
+    if (m) max = Math.max(max, Number(m[1]));
+  }
+  return max || (a.streamingEpisodes?.length ?? 0);
+}
 
 /** AniList streaming titles look like "Episode 3 - Title"; map them by number. */
 export function episodeTitles(a: AniResult, count: number): (string | null)[] {

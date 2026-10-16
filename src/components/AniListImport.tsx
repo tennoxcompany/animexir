@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { searchAniList, trGenre, trStatus, trSeason, cleanDesc, episodeTitles, type AniResult } from "@/lib/anilist";
+import { searchAniList, trGenre, trStatus, trSeason, cleanDesc, episodeTitles, episodeCount, type AniResult } from "@/lib/anilist";
 
 export function AniListImport({ onDone }: { onDone: () => void }) {
   const [q, setQ] = useState("");
@@ -25,7 +25,7 @@ export function AniListImport({ onDone }: { onDone: () => void }) {
     setAdding(a.id);
     const title = a.title.english || a.title.romaji || "İsimsiz";
     const season = trSeason(a.season, a.seasonYear);
-    const { data: anime, error } = await supabase.from("animes").insert({
+    const row = {
       title,
       anilist_id: a.id,
       cover_url: a.coverImage.extraLarge || a.coverImage.large,
@@ -35,18 +35,35 @@ export function AniListImport({ onDone }: { onDone: () => void }) {
       status: trStatus(a.status) + (season ? ` · ${season}` : ""),
       score: a.averageScore ? a.averageScore / 10 : 0,
       genres: a.genres.map(trGenre),
-    }).select("id").single();
-    if (error || !anime) { setAdding(null); return toast.error(error?.message ?? "Eklenemedi"); }
+    };
 
-    const count = a.episodes ?? a.streamingEpisodes.length ?? 0;
+    // Aynı anime daha önce eklendiyse yeni kayıt açma; bilgilerini güncelle ve eksik bölümleri tamamla.
+    const { data: existing } = await supabase.from("animes").select("id").eq("anilist_id", a.id).maybeSingle();
+    let animeId: string;
+    if (existing) {
+      animeId = existing.id;
+      await supabase.from("animes").update(row).eq("id", animeId);
+    } else {
+      const { data: anime, error } = await supabase.from("animes").insert(row).select("id").single();
+      if (error || !anime) { setAdding(null); return toast.error(error?.message ?? "Eklenemedi"); }
+      animeId = anime.id;
+    }
+
+    const count = episodeCount(a);
+    let failed = false;
     if (count > 0) {
       const titles = episodeTitles(a, count);
-      const { error: e2 } = await supabase.from("episodes").insert(
-        titles.map((t, i) => ({ anime_id: anime.id, number: i + 1, title: t })),
-      );
-      if (e2) toast.error("Bölümler eklenemedi: " + e2.message);
+      const rows = titles.map((t, i) => ({ anime_id: animeId, number: i + 1, title: t }));
+      // Uzun serilerde (1000+ bölüm) istekleri parçalara böl.
+      // ignoreDuplicates: zaten var olan bölümlere (ve eklediğin video linklerine) dokunmaz.
+      for (let i = 0; i < rows.length; i += 500) {
+        const { error: e2 } = await supabase
+          .from("episodes")
+          .upsert(rows.slice(i, i + 500), { onConflict: "anime_id,number", ignoreDuplicates: true });
+        if (e2) { failed = true; toast.error("Bölümler eklenemedi: " + e2.message); break; }
+      }
     }
-    toast.success(`${title} ${count} bölümüyle eklendi`);
+    if (!failed) toast.success(existing ? `${title} güncellendi, bölüm sayısı: ${count}` : `${title} ${count} bölümüyle eklendi`);
     setAdding(null);
     onDone();
   };
@@ -66,7 +83,7 @@ export function AniListImport({ onDone }: { onDone: () => void }) {
             <div className="flex min-w-0 flex-1 flex-col">
               <p className="line-clamp-2 font-semibold">{a.title.english || a.title.romaji}</p>
               <p className="text-xs text-muted-foreground">
-                {[a.format, trSeason(a.season, a.seasonYear), `${a.episodes ?? "?"} bölüm`].filter(Boolean).join(" · ")}
+                {[a.format, trSeason(a.season, a.seasonYear), a.episodes ? `${a.episodes} bölüm` : episodeCount(a) ? `${episodeCount(a)} bölüm (devam ediyor)` : "? bölüm"].filter(Boolean).join(" · ")}
               </p>
               {a.averageScore && <p className="text-xs text-gold">★ {(a.averageScore / 10).toFixed(1)}</p>}
               <Button size="sm" variant="hero" className="mt-auto self-start" disabled={adding !== null} onClick={() => add(a)}>
