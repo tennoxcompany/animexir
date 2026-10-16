@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BirlikteIzleRouteImport } from './routes/birlikte-izle'
 import { Route as GirisRouteImport } from './routes/giris'
 import { Route as ProfilRouteImport } from './routes/profil'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ToplulukRouteImport } from './routes/topluluk'
 import { Route as YonetimRouteImport } from './routes/yonetim'
 import { Route as AnimeIdRouteImport } from './routes/anime.$id'
@@ -38,6 +39,11 @@ const GirisRoute = GirisRouteImport.update({
 const ProfilRoute = ProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToplulukRoute = ToplulukRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
   '/profil': typeof ProfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/topluluk': typeof ToplulukRoute
   '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
   '/profil': typeof ProfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/topluluk': typeof ToplulukRoute
   '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
   '/profil': typeof ProfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/topluluk': typeof ToplulukRoute
   '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/birlikte-izle'
     | '/giris'
     | '/profil'
+    | '/sitemap.xml'
     | '/topluluk'
     | '/yonetim'
     | '/anime/$id'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/birlikte-izle'
     | '/giris'
     | '/profil'
+    | '/sitemap.xml'
     | '/topluluk'
     | '/yonetim'
     | '/anime/$id'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/birlikte-izle'
     | '/giris'
     | '/profil'
+    | '/sitemap.xml'
     | '/topluluk'
     | '/yonetim'
     | '/anime/$id'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   BirlikteIzleRoute: typeof BirlikteIzleRoute
   GirisRoute: typeof GirisRoute
   ProfilRoute: typeof ProfilRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ToplulukRoute: typeof ToplulukRoute
   YonetimRoute: typeof YonetimRoute
   AnimeIdRoute: typeof AnimeIdRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/profil'
       fullPath: '/profil'
       preLoaderRoute: typeof ProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/topluluk': {
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   BirlikteIzleRoute: BirlikteIzleRoute,
   GirisRoute: GirisRoute,
   ProfilRoute: ProfilRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ToplulukRoute: ToplulukRoute,
   YonetimRoute: YonetimRoute,
   AnimeIdRoute: AnimeIdRoute,

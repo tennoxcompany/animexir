@@ -10,16 +10,29 @@ import { Avatar } from "@/components/Header";
 import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
+import { loadSeoEpisode, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/izle/$episodeId")({
-  head: () => ({
-    meta: [
-      { title: "Bölüm İzle — AnimeXir" },
-      { name: "description", content: "Full HD anime bölümünü izle, yorum yap ve arkadaşlarınla birlikte izle." },
-      { property: "og:title", content: "Bölüm İzle — AnimeXir" },
-      { property: "og:description", content: "Full HD anime bölümünü izle ve yorum yap." },
-    ],
-  }),
+  loader: async ({ params }) => ({ seo: await loadSeoEpisode(params.episodeId) }),
+  head: ({ loaderData, params }) => {
+    const ep = loaderData?.seo;
+    const url = `${SITE_URL}/izle/${params.episodeId}`;
+    if (!ep?.animes) {
+      return {
+        meta: seoMeta({ title: "Bölüm İzle — AnimeXir", description: "Full HD anime bölümünü izle, yorum yap ve arkadaşlarınla birlikte izle.", url }),
+        links: [{ rel: "canonical", href: url }],
+      };
+    }
+    const a = ep.animes;
+    const lang = a.has_dub ? "Türkçe Altyazılı & Dublajlı" : "Türkçe Altyazılı";
+    const epName = ep.title && !/^\d+\. Bölüm$/.test(ep.title) ? ` — ${ep.title}` : "";
+    const title = `${a.title} ${ep.number}. Bölüm İzle${epName} | AnimeXir`;
+    const description = shortText(`${a.title} ${ep.number}. bölüm ${lang} Full HD izle. Yorum yap, arkadaşlarınla birlikte izle. ${a.description ?? ""}`);
+    return {
+      meta: seoMeta({ title, description, image: a.banner_url || a.cover_url, url, type: "video.episode" }),
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: WatchPage,
 });
 

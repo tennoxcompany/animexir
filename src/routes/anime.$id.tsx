@@ -6,16 +6,43 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import type { Anime, Episode } from "@/lib/data";
+import { loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/anime/$id")({
-  head: () => ({
-    meta: [
-      { title: "Anime Detayı — AnimeXir" },
-      { name: "description", content: "Anime bölümleri, puanlar ve izleme listesi AnimeXir'de." },
-      { property: "og:title", content: "Anime Detayı — AnimeXir" },
-      { property: "og:description", content: "Anime bölümleri, puanlar ve izleme listesi." },
-    ],
-  }),
+  loader: async ({ params }) => ({ seo: await loadSeoAnime(params.id) }),
+  head: ({ loaderData, params }) => {
+    const a = loaderData?.seo;
+    const url = `${SITE_URL}/anime/${params.id}`;
+    if (!a) {
+      return {
+        meta: seoMeta({ title: "Anime Detayı — AnimeXir", description: "Anime bölümleri, puanlar ve izleme listesi AnimeXir'de.", url }),
+        links: [{ rel: "canonical", href: url }],
+      };
+    }
+    const lang = a.has_dub ? "Türkçe Altyazılı & Dublajlı" : "Türkçe Altyazılı";
+    const title = `${a.title} İzle — ${lang} | AnimeXir`;
+    const description = shortText(`${a.title} tüm bölümleri ${lang} Full HD izle. ${a.description ?? ""}`);
+    const image = a.banner_url || a.cover_url;
+    return {
+      meta: seoMeta({ title, description, image, url, type: "video.tv_show" }),
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TVSeries",
+            name: a.title,
+            description: shortText(a.description, 500),
+            image: a.cover_url ?? undefined,
+            genre: a.genres ?? undefined,
+            url,
+            inLanguage: "tr",
+          }),
+        },
+      ],
+    };
+  },
   component: AnimePage,
 });
 
