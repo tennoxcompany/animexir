@@ -6,6 +6,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 const links = [
   { to: "/", label: "Keşfet" },
   { to: "/birlikte-izle", label: "Birlikte İzle" },
+  { to: "/takvim", label: "Takvim" },
   { to: "/topluluk", label: "Topluluk" },
 ] as const;
 

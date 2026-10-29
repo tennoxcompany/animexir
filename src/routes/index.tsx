@@ -5,6 +5,8 @@ import { Play, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimeCard } from "@/components/AnimeCard";
+import { ContinueWatching } from "@/components/ContinueWatching";
+import { TodayStrip } from "@/components/TodayStrip";
 import { fetchAnimes, fetchLatestEpisodes, GENRES } from "@/lib/data";
 
 export const Route = createFileRoute("/")({
@@ -68,6 +70,8 @@ function Index() {
       )}
 
       <div className="mx-auto max-w-7xl space-y-16 px-4 py-12">
+        <ContinueWatching />
+        <TodayStrip />
         {!!latest.data?.length && (
           <section>
             <h2 className="mb-5 text-2xl font-bold">Son Eklenen Bölümler</h2>

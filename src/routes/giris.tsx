@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +62,13 @@ function Login() {
         {mode === "up" && <Input required placeholder="Kullanıcı adı" value={username} onChange={(e) => setUsername(e.target.value)} />}
         <Input required type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input required type="password" minLength={6} placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} />
+        {mode === "in" && (
+          <div className="text-right">
+            <Link to="/sifre-sifirla" search={{ email: email || undefined }} className="text-sm text-primary hover:underline" data-testid="forgot-password-link">
+              Şifremi unuttum
+            </Link>
+          </div>
+        )}
         <Button type="submit" variant="hero" className="h-11 w-full" disabled={busy}>{mode === "in" ? "Giriş Yap" : "Kayıt Ol"}</Button>
       </form>
       <button className="mt-4 text-sm text-muted-foreground hover:text-foreground" onClick={() => setMode(mode === "in" ? "up" : "in")}>

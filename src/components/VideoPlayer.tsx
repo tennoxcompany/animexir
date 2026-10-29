@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ShieldCheck, Zap } from "lucide-react";
+import { getProgress, saveProgress } from "@/lib/progress";
 
 /** Direct .mp4/.webm/.m3u8 links use the native player; anything else (embed pages) uses an iframe. */
 const DIRECT = /\.(mp4|webm|ogg|mov|m3u8)(\?|$)/i;
@@ -17,7 +18,24 @@ export const EMBED_SERVERS: Server[] = [
 
 export function VideoPlayer({ url, title, k }: { url: string; title: string; k: string }) {
   if (DIRECT.test(url)) {
-    return <video key={k} src={url} controls autoPlay className="h-full w-full" />;
+    return (
+      <video key={k} src={url} controls autoPlay className="h-full w-full" data-testid="episode-video"
+        onLoadedMetadata={(e) => {
+          const p = getProgress(k);
+          if (p && p.t / p.d < 0.95) e.currentTarget.currentTime = p.t;
+        }}
+        onTimeUpdate={(e) => {
+          const v = e.currentTarget;
+          const s = Math.floor(v.currentTime);
+          if (s % 5 === 0 && v.dataset["saved"] !== String(s)) {
+            v.dataset["saved"] = String(s);
+            saveProgress(k, v.currentTime, v.duration);
+          }
+        }}
+        onPause={(e) => saveProgress(k, e.currentTarget.currentTime, e.currentTarget.duration)}
+        onEnded={(e) => saveProgress(k, e.currentTarget.duration, e.currentTarget.duration)}
+      />
+    );
   }
   return (
     <iframe

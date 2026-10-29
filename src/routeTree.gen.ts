@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BirlikteIzleRouteImport } from './routes/birlikte-izle'
 import { Route as GirisRouteImport } from './routes/giris'
 import { Route as ProfilRouteImport } from './routes/profil'
+import { Route as SifreSifirlaRouteImport } from './routes/sifre-sifirla'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TakvimRouteImport } from './routes/takvim'
 import { Route as ToplulukRouteImport } from './routes/topluluk'
 import { Route as YonetimRouteImport } from './routes/yonetim'
 import { Route as AnimeIdRouteImport } from './routes/anime.$id'
@@ -41,9 +43,19 @@ const ProfilRoute = ProfilRouteImport.update({
   path: '/profil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SifreSifirlaRoute = SifreSifirlaRouteImport.update({
+  id: '/sifre-sifirla',
+  path: '/sifre-sifirla',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TakvimRoute = TakvimRouteImport.update({
+  id: '/takvim',
+  path: '/takvim',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToplulukRoute = ToplulukRouteImport.update({
@@ -82,7 +94,9 @@ export interface FileRoutesByFullPath {
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
   '/profil': typeof ProfilRoute
+  '/sifre-sifirla': typeof SifreSifirlaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/takvim': typeof TakvimRoute
   '/topluluk': typeof ToplulukRoute
   '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
@@ -95,7 +109,9 @@ export interface FileRoutesByTo {
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
   '/profil': typeof ProfilRoute
+  '/sifre-sifirla': typeof SifreSifirlaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/takvim': typeof TakvimRoute
   '/topluluk': typeof ToplulukRoute
   '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
@@ -109,7 +125,9 @@ export interface FileRoutesById {
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
   '/profil': typeof ProfilRoute
+  '/sifre-sifirla': typeof SifreSifirlaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/takvim': typeof TakvimRoute
   '/topluluk': typeof ToplulukRoute
   '/yonetim': typeof YonetimRoute
   '/anime/$id': typeof AnimeIdRoute
@@ -124,7 +142,9 @@ export interface FileRouteTypes {
     | '/birlikte-izle'
     | '/giris'
     | '/profil'
+    | '/sifre-sifirla'
     | '/sitemap.xml'
+    | '/takvim'
     | '/topluluk'
     | '/yonetim'
     | '/anime/$id'
@@ -137,7 +157,9 @@ export interface FileRouteTypes {
     | '/birlikte-izle'
     | '/giris'
     | '/profil'
+    | '/sifre-sifirla'
     | '/sitemap.xml'
+    | '/takvim'
     | '/topluluk'
     | '/yonetim'
     | '/anime/$id'
@@ -150,7 +172,9 @@ export interface FileRouteTypes {
     | '/birlikte-izle'
     | '/giris'
     | '/profil'
+    | '/sifre-sifirla'
     | '/sitemap.xml'
+    | '/takvim'
     | '/topluluk'
     | '/yonetim'
     | '/anime/$id'
@@ -164,7 +188,9 @@ export interface RootRouteChildren {
   BirlikteIzleRoute: typeof BirlikteIzleRoute
   GirisRoute: typeof GirisRoute
   ProfilRoute: typeof ProfilRoute
+  SifreSifirlaRoute: typeof SifreSifirlaRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TakvimRoute: typeof TakvimRoute
   ToplulukRoute: typeof ToplulukRoute
   YonetimRoute: typeof YonetimRoute
   AnimeIdRoute: typeof AnimeIdRoute
@@ -203,11 +229,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sifre-sifirla': {
+      id: '/sifre-sifirla'
+      path: '/sifre-sifirla'
+      fullPath: '/sifre-sifirla'
+      preLoaderRoute: typeof SifreSifirlaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/takvim': {
+      id: '/takvim'
+      path: '/takvim'
+      fullPath: '/takvim'
+      preLoaderRoute: typeof TakvimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/topluluk': {
@@ -260,7 +300,9 @@ const rootRouteChildren: RootRouteChildren = {
   BirlikteIzleRoute: BirlikteIzleRoute,
   GirisRoute: GirisRoute,
   ProfilRoute: ProfilRoute,
+  SifreSifirlaRoute: SifreSifirlaRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TakvimRoute: TakvimRoute,
   ToplulukRoute: ToplulukRoute,
   YonetimRoute: YonetimRoute,
   AnimeIdRoute: AnimeIdRoute,

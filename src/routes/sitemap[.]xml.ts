@@ -6,6 +6,7 @@ const SITE = "https://animexir.lovable.app";
 const STATIC_PAGES = [
   { path: "/", changefreq: "daily", priority: "1.0" },
   { path: "/topluluk", changefreq: "daily", priority: "0.7" },
+  { path: "/takvim", changefreq: "daily", priority: "0.7" },
   { path: "/birlikte-izle", changefreq: "weekly", priority: "0.7" },
   { path: "/giris", changefreq: "monthly", priority: "0.3" },
 ];
