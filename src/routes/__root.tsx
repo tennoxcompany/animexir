@@ -83,6 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "google-site-verification", content: "7KPYLPXUwVfSp3ru-gEcqjxkNXcuX3bHhoKI6p5n3Ik" },
       { title: "AnimeXir — Türkçe Anime İzle" },
       { name: "description", content: "AnimeXir & Tennox: Türkçe altyazılı ve dublajlı anime izle, arkadaşlarınla birlikte izle." },
       { property: "og:type", content: "website" },
