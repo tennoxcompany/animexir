@@ -10,7 +10,7 @@ import { Avatar } from "@/components/Header";
 import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
-import { loadSeoEpisode, seoMeta, shortText, SITE_URL } from "@/lib/seo";
+import { NOINDEX, loadSeoEpisode, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/izle/$episodeId")({
   loader: async ({ params }) => ({ seo: await loadSeoEpisode(params.episodeId) }),
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/izle/$episodeId")({
     const url = `${SITE_URL}/izle/${params.episodeId}`;
     if (!ep?.animes) {
       return {
-        meta: seoMeta({ title: "Bölüm İzle — AnimeXir", description: "Full HD anime bölümünü izle, yorum yap ve arkadaşlarınla birlikte izle.", url }),
+        meta: [...seoMeta({ title: "Bölüm İzle — AnimeXir", description: "Full HD anime bölümünü izle, yorum yap ve arkadaşlarınla birlikte izle.", url }), NOINDEX],
         links: [{ rel: "canonical", href: url }],
       };
     }

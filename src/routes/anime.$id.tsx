@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/FollowButton";
 import { useAuth } from "@/lib/auth";
 import type { Anime, Episode } from "@/lib/data";
-import { loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
+import { NOINDEX, loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/anime/$id")({
   loader: async ({ params }) => ({ seo: await loadSeoAnime(params.id) }),
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/anime/$id")({
     const url = `${SITE_URL}/anime/${params.id}`;
     if (!a) {
       return {
-        meta: seoMeta({ title: "Anime Detayı — AnimeXir", description: "Anime bölümleri, puanlar ve izleme listesi AnimeXir'de.", url }),
+        meta: [...seoMeta({ title: "Anime Detayı — AnimeXir", description: "Anime bölümleri, puanlar ve izleme listesi AnimeXir'de.", url }), NOINDEX],
         links: [{ rel: "canonical", href: url }],
       };
     }

@@ -6,16 +6,10 @@ import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/giris")({
-  head: () => ({
-    meta: [
-      { title: "Giriş Yap — AnimeXir" },
-      { name: "description", content: "AnimeXir hesabına giriş yap veya ücretsiz kayıt ol." },
-      { property: "og:title", content: "Giriş Yap — AnimeXir" },
-      { property: "og:description", content: "AnimeXir hesabına giriş yap veya kayıt ol." },
-    ],
-  }),
+  head: () => pageHead("/giris", "Giriş Yap — AnimeXir", "AnimeXir hesabına giriş yap veya ücretsiz kayıt ol."),
   component: Login,
 });
 

@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/kullanici/$id")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex, follow" },
       { title: "Kullanıcı Profili — AnimeXir" },
       { name: "description", content: "AnimeXir topluluk üyesinin profili." },
       { property: "og:title", content: "Kullanıcı Profili — AnimeXir" },

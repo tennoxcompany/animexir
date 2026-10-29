@@ -7,16 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { fetchAnimes, roomCode, timeAgo } from "@/lib/data";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/birlikte-izle")({
-  head: () => ({
-    meta: [
-      { title: "Birlikte İzle — AnimeXir" },
-      { name: "description", content: "İzleme odası kur, kodu paylaş, arkadaşlarınla senkron anime izle ve sohbet et." },
-      { property: "og:title", content: "Birlikte İzle — AnimeXir" },
-      { property: "og:description", content: "Arkadaşlarınla senkron anime izle ve sohbet et." },
-    ],
-  }),
+  head: () => pageHead("/birlikte-izle", "Birlikte İzle — AnimeXir", "İzleme odası kur, kodu paylaş, arkadaşlarınla senkron anime izle ve sohbet et."),
   component: PartyPage,
 });
 

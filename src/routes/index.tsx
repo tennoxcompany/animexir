@@ -8,14 +8,38 @@ import { AnimeCard } from "@/components/AnimeCard";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { TodayStrip } from "@/components/TodayStrip";
 import { fetchAnimes, fetchLatestEpisodes, GENRES } from "@/lib/data";
+import { OG_IMAGE, pageHead, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "AnimeXir — Türkçe Altyazılı & Dublajlı Anime İzle" },
-      { name: "description", content: "Full HD anime kataloğu, yeni bölümler ve arkadaşlarınla birlikte izleme odaları. AnimeXir & Tennox." },
-      { property: "og:title", content: "AnimeXir — Türkçe Anime İzle" },
-      { property: "og:description", content: "Full HD anime kataloğu, yeni bölümler ve birlikte izleme odaları." },
+    ...pageHead("/", SITE_TITLE, SITE_DESCRIPTION),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "@id": `${SITE_URL}/#website`,
+              url: `${SITE_URL}/`,
+              name: "AnimeXir",
+              alternateName: ["Animexir", "Anime Xir"],
+              description: SITE_DESCRIPTION,
+              inLanguage: "tr-TR",
+              publisher: { "@id": `${SITE_URL}/#organization` },
+            },
+            {
+              "@type": "Organization",
+              "@id": `${SITE_URL}/#organization`,
+              name: "AnimeXir",
+              alternateName: "Tennox Company",
+              url: `${SITE_URL}/`,
+              logo: OG_IMAGE,
+            },
+          ],
+        }),
+      },
     ],
   }),
   component: Index,
@@ -55,7 +79,7 @@ function Index() {
               <span className="rounded-full glass px-3 py-1">Full HD 1080p</span>
               <span className="rounded-full glass px-3 py-1 text-gold">★ {hero.score}</span>
             </div>
-            <h1 className="max-w-2xl text-5xl font-extrabold leading-none md:text-7xl">{hero.title}</h1>
+            <p className="max-w-2xl text-5xl font-extrabold leading-none md:text-7xl">{hero.title}</p>
             <p className="mt-4 line-clamp-3 max-w-xl text-muted-foreground">{hero.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="hero" size="lg">
@@ -135,7 +159,29 @@ function Index() {
           )}
           {!animes.isLoading && list.length === 0 && <p className="text-muted-foreground">Bu filtreye uygun anime yok.</p>}
         </section>
+
+        <SeoIntro />
       </div>
     </div>
+  );
+}
+
+function SeoIntro() {
+  return (
+    <section className="max-w-3xl space-y-3 text-sm text-muted-foreground">
+      <h1 className="text-2xl font-bold text-foreground">AnimeXir — Türkçe Altyazılı ve Dublajlı Anime İzle</h1>
+      <p>
+        AnimeXir, Türkçe altyazılı ve Türkçe dublajlı animeleri tek yerde toplayan ücretsiz bir anime izleme platformudur.
+        Aksiyon, macera, romantik, komedi, fantastik ve daha birçok türdeki animeyi Full HD kalitede keşfedebilir, yeni çıkan
+        bölümleri takip edebilirsin.
+      </p>
+      <p>
+        <Link to="/takvim" className="text-primary hover:underline">Haftalık anime yayın takvimi</Link> ile hangi gün hangi
+        bölümün çıkacağını Türkiye saatiyle görebilir, beğendiğin animeleri takip ederek yeni bölüm hatırlatmaları alabilirsin.{" "}
+        <Link to="/birlikte-izle" className="text-primary hover:underline">Birlikte izle</Link> odalarında arkadaşlarınla aynı
+        anda izleyip sohbet edebilir, <Link to="/topluluk" className="text-primary hover:underline">topluluk sohbetinde</Link>{" "}
+        diğer anime severlerle buluşabilirsin.
+      </p>
+    </section>
   );
 }

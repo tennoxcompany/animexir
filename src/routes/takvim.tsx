@@ -7,15 +7,10 @@ import { toggleReminder, useReminders } from "@/lib/reminders";
 import { Button } from "@/components/ui/button";
 import { fetchAnimes } from "@/lib/data";
 import { fetchWeekSchedule, weekStart, type Airing } from "@/lib/schedule";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/takvim")({
-  head: () => ({
-    meta: [
-      { title: "Haftalık Anime Yayın Takvimi — AnimeXir" },
-      { name: "description", content: "Bu hafta hangi gün hangi anime bölümü çıkıyor? Türkiye saatiyle güncel haftalık anime yayın takvimi." },
-      { property: "og:title", content: "Haftalık Anime Yayın Takvimi — AnimeXir" },
-    ],
-  }),
+  head: () => pageHead("/takvim", "Haftalık Anime Yayın Takvimi — AnimeXir", "Bu hafta hangi gün hangi anime bölümü çıkıyor? Türkiye saatiyle güncel haftalık anime yayın takvimi."),
   component: SchedulePage,
 });
 

@@ -8,16 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/Header";
 import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/topluluk")({
-  head: () => ({
-    meta: [
-      { title: "Topluluk Sohbeti — AnimeXir" },
-      { name: "description", content: "AnimeXir topluluğu: genel sohbet, yeni bölümler, anime önerileri ve Türkçe dublaj kanalları." },
-      { property: "og:title", content: "Topluluk Sohbeti — AnimeXir" },
-      { property: "og:description", content: "Anime severlerle canlı sohbet et." },
-    ],
-  }),
+  head: () => pageHead("/topluluk", "Topluluk Sohbeti — AnimeXir", "AnimeXir topluluğu: genel sohbet, yeni bölümler, anime önerileri ve Türkçe dublaj kanalları."),
   component: Community,
 });
 

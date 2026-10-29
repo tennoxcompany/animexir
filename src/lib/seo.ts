@@ -1,6 +1,20 @@
 import { restSelect } from "@/lib/rest";
 
 export const SITE_URL = "https://animexir.lovable.app";
+export const SITE_TITLE = "AnimeXir — Türkçe Altyazılı ve Dublajlı Anime İzle";
+export const SITE_DESCRIPTION =
+  "AnimeXir ile Türkçe altyazılı ve dublajlı animeleri keşfet. Güncel anime bölümlerini takip et, anime takvimini incele ve arkadaşlarınla birlikte izleme odalarında buluş.";
+export const OG_IMAGE =
+  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/lovp_0xvya506cf846aj39x6k0j3hy6/ae2e2b39e6f745b12ffe74dc8000a2d1_1793299552193.png";
+
+/** Kişisel / giriş gerektiren sayfalar arama sonuçlarında görünmesin. */
+export const NOINDEX = { name: "robots", content: "noindex, follow" };
+
+/** Herkese açık sabit sayfalar için başlık, açıklama, Open Graph ve canonical üretir. */
+export function pageHead(path: string, title: string, description: string) {
+  const url = SITE_URL + path;
+  return { meta: seoMeta({ title, description, image: OG_IMAGE, url }), links: [{ rel: "canonical", href: url }] };
+}
 
 export type SeoAnime = {
   id: string;

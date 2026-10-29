@@ -12,6 +12,7 @@ import { EmbedPlayer } from "@/components/VideoPlayer";
 export const Route = createFileRoute("/oda/$code")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex, follow" },
       { title: "İzleme Odası — AnimeXir" },
       { name: "description", content: "Canlı izleme odası: senkron oynatma, sohbet ve tepkiler." },
       { property: "og:title", content: "İzleme Odası — AnimeXir" },

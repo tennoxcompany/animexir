@@ -17,6 +17,7 @@ import { Header } from "@/components/Header";
 import { ReminderWatcher } from "@/components/ReminderWatcher";
 import { AutoEpisodeSync } from "@/components/AutoEpisodeSync";
 import { Toaster } from "@/components/ui/sonner";
+import { OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -84,10 +85,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "google-site-verification", content: "7KPYLPXUwVfSp3ru-gEcqjxkNXcuX3bHhoKI6p5n3Ik" },
-      { title: "AnimeXir — Türkçe Anime İzle" },
-      { name: "description", content: "AnimeXir & Tennox: Türkçe altyazılı ve dublajlı anime izle, arkadaşlarınla birlikte izle." },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "AnimeXir" },
+      { property: "og:locale", content: "tr_TR" },
+      { property: "og:image", content: OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

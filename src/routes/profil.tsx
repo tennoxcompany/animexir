@@ -14,6 +14,7 @@ import { timeAgo, type Anime } from "@/lib/data";
 export const Route = createFileRoute("/profil")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex, follow" },
       { title: "Profilim — AnimeXir" },
       { name: "description", content: "İzlediğin, bitirdiğin ve listene eklediğin animeler, izleme geçmişin ve rozetlerin." },
       { property: "og:title", content: "Profilim — AnimeXir" },
