@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
 import { Header } from "@/components/Header";
+import { ReminderWatcher } from "@/components/ReminderWatcher";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -128,6 +129,7 @@ function RootComponent() {
           © 2026 AnimeXir & Tennox Company
         </footer>
         <Toaster theme="dark" />
+        <ReminderWatcher />
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -4,6 +4,7 @@ import { Play } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { FollowButton } from "@/components/FollowButton";
 import { useAuth } from "@/lib/auth";
 import type { Anime, Episode } from "@/lib/data";
 import { loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
@@ -122,6 +123,7 @@ function AnimePage() {
             <p className="mt-4 max-w-2xl text-muted-foreground">{anime.description}</p>
             <div className="mt-6 flex flex-wrap gap-2">
               {first && <Button asChild variant="hero"><Link to="/izle/$episodeId" params={{ episodeId: first.id }}><Play className="fill-current" /> İzlemeye Başla</Link></Button>}
+              <FollowButton anime={anime} />
               {STATUSES.map((s) => (
                 <Button key={s.v} variant={mine.data?.status === s.v ? "default" : "glass"} onClick={() => setStatus(s.v)}>{s.l}</Button>
               ))}
