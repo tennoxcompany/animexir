@@ -31,9 +31,9 @@ export function Header() {
           )}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          <NotificationBell userId={userId} />
           {userId ? (
             <>
-            <NotificationBell userId={userId} />
             <Link to="/profil" className="flex items-center gap-2">
               <span className="hidden text-sm sm:block">{profile?.username}</span>
               <Avatar url={profile?.avatar_url} name={profile?.username} />

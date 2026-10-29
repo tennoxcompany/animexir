@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { Bell, BellRing, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { toast } from "sonner";
+import { toggleReminder, useReminders } from "@/lib/reminders";
 import { Button } from "@/components/ui/button";
 import { fetchAnimes } from "@/lib/data";
 import { fetchWeekSchedule, weekStart, type Airing } from "@/lib/schedule";
@@ -25,6 +27,7 @@ function SchedulePage() {
   const [offset, setOffset] = useState(0);
   const [day, setDay] = useState((new Date().getDay() + 6) % 7);
   const [onlySite, setOnlySite] = useState(false);
+  const rem = useReminders();
   const start = useMemo(() => { const s = weekStart(); s.setDate(s.getDate() + offset * 7); return s; }, [offset]);
 
   const sched = useQuery({ queryKey: ["schedule", start.getTime()], queryFn: () => fetchWeekSchedule(start), staleTime: 10 * 60_000 });
@@ -80,21 +83,21 @@ function SchedulePage() {
         {sched.isError && <p className="text-destructive" data-testid="schedule-error">Takvim şu an yüklenemedi, biraz sonra tekrar dene.</p>}
         {sched.data && byDay[day]!.length === 0 && <p className="text-muted-foreground" data-testid="schedule-empty">Bu gün için yayın yok.</p>}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="schedule-list">
-          {byDay[day]!.map((x) => <AiringRow key={x.id} x={x} siteId={siteMap.get(x.media.id)} />)}
+          {byDay[day]!.map((x) => <AiringRow key={x.id} x={x} siteId={siteMap.get(x.media.id)} subscribed={rem.ids.has(x.id)} />)}
         </div>
       </div>
     </div>
   );
 }
 
-function AiringRow({ x, siteId }: { x: Airing; siteId?: string }) {
+function AiringRow({ x, siteId, subscribed }: { x: Airing; siteId?: string; subscribed: boolean }) {
   const title = x.media.title.english ?? x.media.title.romaji ?? "";
   const diff = x.airingAt * 1000 - Date.now();
   const status = diff <= 0 ? "Yayınlandı" : diff < 86400_000 ? `${Math.floor(diff / 3600_000)} sa ${Math.floor((diff % 3600_000) / 60_000)} dk sonra` : null;
   const body = (
     <div className={`flex gap-3 rounded-xl border border-border bg-card p-3 transition-colors ${siteId ? "hover:border-primary" : ""}`}>
       <img src={x.media.coverImage.large ?? ""} alt={title} loading="lazy" className="h-24 w-16 shrink-0 rounded-lg object-cover" />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 pr-8">
         <p className="flex items-center gap-1.5 text-sm font-bold text-primary"><Clock className="h-3.5 w-3.5" /> {fmtTime(x.airingAt)}</p>
         <p className="mt-1 line-clamp-2 font-semibold leading-snug">{title}</p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -104,7 +107,18 @@ function AiringRow({ x, siteId }: { x: Airing; siteId?: string }) {
       </div>
     </div>
   );
-  return siteId
+  const link = siteId
     ? <Link to="/anime/$id" params={{ id: siteId }} data-testid={`schedule-item-${x.id}`}>{body}</Link>
     : <div data-testid={`schedule-item-${x.id}`}>{body}</div>;
+  if (diff <= 0) return link;
+  return (
+    <div className="relative">
+      {link}
+      <button onClick={() => { toggleReminder(x, siteId); toast.success(subscribed ? "Hatırlatma kaldırıldı" : "Bölüm çıkınca bildirim kutuna düşecek"); }}
+        aria-label={subscribed ? "Hatırlatmayı kaldır" : "Hatırlat"} data-testid={`schedule-remind-${x.id}`}
+        className={`absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full transition-colors ${subscribed ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+        {subscribed ? <BellRing className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+      </button>
+    </div>
+  );
 }
