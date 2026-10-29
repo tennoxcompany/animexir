@@ -8,7 +8,7 @@ import { AnimeCard } from "@/components/AnimeCard";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { TodayStrip } from "@/components/TodayStrip";
 import { fetchAnimes, fetchLatestEpisodes, GENRES } from "@/lib/data";
-import { animeParam, episodeParam, OG_IMAGE, pageHead, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/seo";
+import { animeParam, episodeParam, LOGO_URL, OG_IMAGE, pageHead, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,7 +35,8 @@ export const Route = createFileRoute("/")({
               name: "AnimeXir",
               alternateName: "Tennox Company",
               url: `${SITE_URL}/`,
-              logo: OG_IMAGE,
+              logo: LOGO_URL,
+              image: OG_IMAGE,
             },
           ],
         }),

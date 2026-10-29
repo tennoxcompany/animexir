@@ -4,8 +4,8 @@ export const SITE_URL = "https://animexir.lovable.app";
 export const SITE_TITLE = "AnimeXir — Türkçe Altyazılı ve Dublajlı Anime İzle";
 export const SITE_DESCRIPTION =
   "AnimeXir ile Türkçe altyazılı ve dublajlı animeleri keşfet. Güncel anime bölümlerini takip et, anime takvimini incele ve arkadaşlarınla birlikte izleme odalarında buluş.";
-export const OG_IMAGE =
-  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/lovp_0xvya506cf846aj39x6k0j3hy6/ae2e2b39e6f745b12ffe74dc8000a2d1_1793299552193.png";
+export const OG_IMAGE = `${SITE_URL}/og-image.png`;
+export const LOGO_URL = `${SITE_URL}/logo.png`;
 
 const TR: Record<string, string> = { ç: "c", ğ: "g", ı: "i", İ: "i", ö: "o", ş: "s", ü: "u", Ç: "c", Ğ: "g", Ö: "o", Ş: "s", Ü: "u" };
 const UUID_TAIL = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
