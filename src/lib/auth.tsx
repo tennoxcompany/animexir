@@ -41,8 +41,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((e, s) => {
       setSession(s);
+      if (e === "PASSWORD_RECOVERY" && !window.location.pathname.startsWith("/sifre-sifirla")) window.location.assign("/sifre-sifirla?recovery=1");
       setTimeout(() => load(s?.user.id), 0);
     });
     supabase.auth.getSession().then(async ({ data }) => {

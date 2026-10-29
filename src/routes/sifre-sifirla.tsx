@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/sifre-sifirla")({
-  validateSearch: (s: Record<string, unknown>) => ({ email: typeof s["email"] === "string" ? s["email"] : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ email: typeof s["email"] === "string" ? s["email"] : undefined, recovery: s["recovery"] ? 1 : undefined }),
   head: () => ({ meta: [{ title: "Şifremi Unuttum — AnimeXir" }, { name: "robots", content: "noindex" }] }),
   component: ResetPage,
 });
@@ -16,7 +16,7 @@ type Step = "email" | "code" | "password";
 function ResetPage() {
   const search = Route.useSearch();
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>("email");
+  const [step, setStep] = useState<Step>(search.recovery ? "password" : "email");
   const [email, setEmail] = useState(search.email ?? "");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");

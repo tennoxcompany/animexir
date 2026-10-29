@@ -64,7 +64,7 @@ function Login() {
         <Input required type="password" minLength={6} placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} />
         {mode === "in" && (
           <div className="text-right">
-            <Link to="/sifre-sifirla" search={{ email: email || undefined }} className="text-sm text-primary hover:underline" data-testid="forgot-password-link">
+            <Link to="/sifre-sifirla" search={{ email: email || undefined, recovery: undefined }} className="text-sm text-primary hover:underline" data-testid="forgot-password-link">
               Şifremi unuttum
             </Link>
           </div>
