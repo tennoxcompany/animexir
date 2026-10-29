@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { restSelect } from "@/lib/rest";
-import { animeParam, episodeParam } from "@/lib/seo";
+import { animeParam, episodeParam, slugify } from "@/lib/seo";
+import { GENRES } from "@/lib/genres";
 
 const SITE = "https://animexir.lovable.app";
 
@@ -47,6 +48,7 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const parts = STATIC_PAGES.map((p) => url(SITE + p.path, p));
+        for (const g of GENRES) parts.push(url(`${SITE}/tur/${slugify(g)}`, { changefreq: "weekly", priority: "0.8" }));
         try {
           const [animes, episodes] = await Promise.all([fetchAll("animes", "id,created_at,title"), fetchAll("episodes", "id,created_at,number,animes(title)")]);
           for (const a of animes) parts.push(url(`${SITE}/anime/${animeParam(a.id, a.title)}`, { lastmod: a.created_at, changefreq: "weekly", priority: "0.9" }));

@@ -6,7 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/FollowButton";
 import { useAuth } from "@/lib/auth";
-import type { Anime, Episode } from "@/lib/data";
+import { GENRES, type Anime, type Episode } from "@/lib/data";
+import { genreSlug } from "@/components/GenreLinks";
 import { animeParam, breadcrumbLd, episodeParam, idFromParam, NOINDEX, loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/anime/$id")({
@@ -120,7 +121,9 @@ function AnimePage() {
           <div className="flex-1 pt-4 md:pt-24">
             <h1 className="text-4xl font-extrabold md:text-5xl">{anime.title}</h1>
             <div className="mt-3 flex flex-wrap gap-2 text-xs">
-              {anime.genres.map((g) => <span key={g} className="rounded-full bg-secondary px-3 py-1">{g}</span>)}
+              {anime.genres.map((g) => GENRES.includes(g)
+                ? <Link key={g} to="/tur/$genre" params={{ genre: genreSlug(g) }} className="rounded-full bg-secondary px-3 py-1 hover:text-primary">{g}</Link>
+                : <span key={g} className="rounded-full bg-secondary px-3 py-1">{g}</span>)}
               {anime.has_dub && <span className="rounded-full bg-primary px-3 py-1 text-primary-foreground">Türkçe Dublaj</span>}
             </div>
             <div className="mt-4 flex flex-wrap gap-6 text-sm text-muted-foreground">

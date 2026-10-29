@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BirlikteIzleRouteImport } from './routes/birlikte-izle'
 import { Route as GirisRouteImport } from './routes/giris'
+import { Route as MagazaRouteImport } from './routes/magaza'
+import { Route as MesajlarRouteImport } from './routes/mesajlar'
 import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as SifreSifirlaRouteImport } from './routes/sifre-sifirla'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -22,6 +24,7 @@ import { Route as AnimeIdRouteImport } from './routes/anime.$id'
 import { Route as IzleEpisodeIdRouteImport } from './routes/izle.$episodeId'
 import { Route as KullaniciIdRouteImport } from './routes/kullanici.$id'
 import { Route as OdaCodeRouteImport } from './routes/oda.$code'
+import { Route as TurGenreRouteImport } from './routes/tur.$genre'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,6 +39,16 @@ const BirlikteIzleRoute = BirlikteIzleRouteImport.update({
 const GirisRoute = GirisRouteImport.update({
   id: '/giris',
   path: '/giris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MagazaRoute = MagazaRouteImport.update({
+  id: '/magaza',
+  path: '/magaza',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesajlarRoute = MesajlarRouteImport.update({
+  id: '/mesajlar',
+  path: '/mesajlar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilRoute = ProfilRouteImport.update({
@@ -88,11 +101,18 @@ const OdaCodeRoute = OdaCodeRouteImport.update({
   path: '/oda/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TurGenreRoute = TurGenreRouteImport.update({
+  id: '/tur/$genre',
+  path: '/tur/$genre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
+  '/magaza': typeof MagazaRoute
+  '/mesajlar': typeof MesajlarRoute
   '/profil': typeof ProfilRoute
   '/sifre-sifirla': typeof SifreSifirlaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -103,11 +123,14 @@ export interface FileRoutesByFullPath {
   '/izle/$episodeId': typeof IzleEpisodeIdRoute
   '/kullanici/$id': typeof KullaniciIdRoute
   '/oda/$code': typeof OdaCodeRoute
+  '/tur/$genre': typeof TurGenreRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
+  '/magaza': typeof MagazaRoute
+  '/mesajlar': typeof MesajlarRoute
   '/profil': typeof ProfilRoute
   '/sifre-sifirla': typeof SifreSifirlaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -118,12 +141,15 @@ export interface FileRoutesByTo {
   '/izle/$episodeId': typeof IzleEpisodeIdRoute
   '/kullanici/$id': typeof KullaniciIdRoute
   '/oda/$code': typeof OdaCodeRoute
+  '/tur/$genre': typeof TurGenreRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/giris': typeof GirisRoute
+  '/magaza': typeof MagazaRoute
+  '/mesajlar': typeof MesajlarRoute
   '/profil': typeof ProfilRoute
   '/sifre-sifirla': typeof SifreSifirlaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -134,6 +160,7 @@ export interface FileRoutesById {
   '/izle/$episodeId': typeof IzleEpisodeIdRoute
   '/kullanici/$id': typeof KullaniciIdRoute
   '/oda/$code': typeof OdaCodeRoute
+  '/tur/$genre': typeof TurGenreRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +168,8 @@ export interface FileRouteTypes {
     | '/'
     | '/birlikte-izle'
     | '/giris'
+    | '/magaza'
+    | '/mesajlar'
     | '/profil'
     | '/sifre-sifirla'
     | '/sitemap.xml'
@@ -151,11 +180,14 @@ export interface FileRouteTypes {
     | '/izle/$episodeId'
     | '/kullanici/$id'
     | '/oda/$code'
+    | '/tur/$genre'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/birlikte-izle'
     | '/giris'
+    | '/magaza'
+    | '/mesajlar'
     | '/profil'
     | '/sifre-sifirla'
     | '/sitemap.xml'
@@ -166,11 +198,14 @@ export interface FileRouteTypes {
     | '/izle/$episodeId'
     | '/kullanici/$id'
     | '/oda/$code'
+    | '/tur/$genre'
   id:
     | '__root__'
     | '/'
     | '/birlikte-izle'
     | '/giris'
+    | '/magaza'
+    | '/mesajlar'
     | '/profil'
     | '/sifre-sifirla'
     | '/sitemap.xml'
@@ -181,12 +216,15 @@ export interface FileRouteTypes {
     | '/izle/$episodeId'
     | '/kullanici/$id'
     | '/oda/$code'
+    | '/tur/$genre'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BirlikteIzleRoute: typeof BirlikteIzleRoute
   GirisRoute: typeof GirisRoute
+  MagazaRoute: typeof MagazaRoute
+  MesajlarRoute: typeof MesajlarRoute
   ProfilRoute: typeof ProfilRoute
   SifreSifirlaRoute: typeof SifreSifirlaRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -197,6 +235,7 @@ export interface RootRouteChildren {
   IzleEpisodeIdRoute: typeof IzleEpisodeIdRoute
   KullaniciIdRoute: typeof KullaniciIdRoute
   OdaCodeRoute: typeof OdaCodeRoute
+  TurGenreRoute: typeof TurGenreRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -220,6 +259,20 @@ declare module '@tanstack/react-router' {
       path: '/giris'
       fullPath: '/giris'
       preLoaderRoute: typeof GirisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/magaza': {
+      id: '/magaza'
+      path: '/magaza'
+      fullPath: '/magaza'
+      preLoaderRoute: typeof MagazaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mesajlar': {
+      id: '/mesajlar'
+      path: '/mesajlar'
+      fullPath: '/mesajlar'
+      preLoaderRoute: typeof MesajlarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profil': {
@@ -292,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OdaCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tur/$genre': {
+      id: '/tur/$genre'
+      path: '/tur/$genre'
+      fullPath: '/tur/$genre'
+      preLoaderRoute: typeof TurGenreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -299,6 +359,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BirlikteIzleRoute: BirlikteIzleRoute,
   GirisRoute: GirisRoute,
+  MagazaRoute: MagazaRoute,
+  MesajlarRoute: MesajlarRoute,
   ProfilRoute: ProfilRoute,
   SifreSifirlaRoute: SifreSifirlaRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -309,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   IzleEpisodeIdRoute: IzleEpisodeIdRoute,
   KullaniciIdRoute: KullaniciIdRoute,
   OdaCodeRoute: OdaCodeRoute,
+  TurGenreRoute: TurGenreRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

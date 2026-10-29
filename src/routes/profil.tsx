@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
 import { AnimeCard } from "@/components/AnimeCard";
+import { UserName } from "@/components/UserName";
 import { useAuth } from "@/lib/auth";
 import { timeAgo, type Anime } from "@/lib/data";
 import { episodeParam } from "@/lib/seo";
@@ -94,12 +95,13 @@ function ProfilePage() {
       <div className="flex flex-col items-start gap-6 rounded-2xl border border-border bg-card p-6 md:flex-row md:items-center">
         <Avatar url={profile.avatar_url} name={profile.username} size={96} />
         <div className="flex-1">
-          <h1 className="text-3xl font-bold">{profile.username}</h1>
+          <h1 className="text-3xl font-bold"><UserName id={userId} name={profile.username} /></h1>
           <p className="text-sm text-gold">{profile.badge}</p>
           <p className="mt-2 text-sm text-muted-foreground">{profile.bio || "Henüz biyografi yok."}</p>
           <p className="mt-1 text-xs text-muted-foreground">{session?.user.email} · Katılım {new Date(profile.created_at).getFullYear()}</p>
         </div>
         <div className="flex gap-2">
+          <Button asChild variant="glass" data-testid="profile-store-link"><Link to="/magaza">Xir Mağaza</Link></Button>
           {isAdmin && <Button asChild variant="hero"><Link to="/yonetim">Yönetici Paneli</Link></Button>}
           <Button variant="outline" onClick={() => supabase.auth.signOut()}>Çıkış</Button>
         </div>

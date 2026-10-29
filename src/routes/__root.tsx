@@ -17,6 +17,7 @@ import { Header } from "@/components/Header";
 import { ReminderWatcher } from "@/components/ReminderWatcher";
 import { AutoEpisodeSync } from "@/components/AutoEpisodeSync";
 import { Toaster } from "@/components/ui/sonner";
+import { DailyReward, SiteThemeApplier } from "@/components/XirEffects";
 import { OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo";
 
 function NotFoundComponent() {
@@ -145,6 +146,8 @@ function RootComponent() {
         <Toaster theme="dark" />
         <ReminderWatcher />
         <AutoEpisodeSync />
+        <DailyReward />
+        <SiteThemeApplier />
       </AuthProvider>
     </QueryClientProvider>
   );

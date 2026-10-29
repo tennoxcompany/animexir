@@ -168,6 +168,24 @@ export type Database = {
           },
         ]
       }
+      direct_messages: {
+        Row: { body: string; created_at: string; id: string; read_at: string | null; recipient_id: string; sender_id: string }
+        Insert: { body: string; created_at?: string; id?: string; read_at?: string | null; recipient_id: string; sender_id: string }
+        Update: { body?: string; created_at?: string; id?: string; read_at?: string | null; recipient_id?: string; sender_id?: string }
+        Relationships: []
+      }
+      user_cosmetics: {
+        Row: { name_color: string | null; owned: string[]; profile_theme: Json | null; site_theme: Json | null; updated_at: string; user_id: string; vip_badge: boolean }
+        Insert: { name_color?: string | null; owned?: string[]; profile_theme?: Json | null; site_theme?: Json | null; updated_at?: string; user_id: string; vip_badge?: boolean }
+        Update: { name_color?: string | null; owned?: string[]; profile_theme?: Json | null; site_theme?: Json | null; updated_at?: string; user_id?: string; vip_badge?: boolean }
+        Relationships: []
+      }
+      user_wallets: {
+        Row: { coins: number; created_at: string; last_claim: string | null; user_id: string }
+        Insert: { coins?: number; created_at?: string; last_claim?: string | null; user_id: string }
+        Update: { coins?: number; created_at?: string; last_claim?: string | null; user_id?: string }
+        Relationships: []
+      }
       friendships: {
         Row: {
           addressee_id: string
@@ -419,6 +437,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      buy_xir_item: { Args: { _item: string }; Returns: Json }
+      claim_daily_reward: { Args: never; Returns: Json }
+      save_xir_cosmetics: {
+        Args: { _name_color: string | null; _profile_theme: Json | null; _site_theme: Json | null; _vip_badge: boolean }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

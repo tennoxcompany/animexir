@@ -5,6 +5,7 @@ import { Play, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimeCard } from "@/components/AnimeCard";
+import { GenreLinks } from "@/components/GenreLinks";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { TodayStrip } from "@/components/TodayStrip";
 import { fetchAnimes, fetchLatestEpisodes, GENRES } from "@/lib/data";
@@ -183,6 +184,7 @@ function SeoIntro() {
         anda izleyip sohbet edebilir, <Link to="/topluluk" className="text-primary hover:underline">topluluk sohbetinde</Link>{" "}
         diğer anime severlerle buluşabilirsin.
       </p>
+      <div className="pt-4"><GenreLinks /></div>
     </section>
   );
 }

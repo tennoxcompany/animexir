@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
+import { CoinChip, DmLink } from "@/components/HeaderXir";
+import { UserName } from "@/components/UserName";
 
 const links = [
   { to: "/", label: "Keşfet" },
@@ -31,11 +33,13 @@ export function Header() {
           )}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          {userId && <CoinChip />}
+          {userId && <DmLink />}
           <NotificationBell userId={userId} />
           {userId ? (
             <>
             <Link to="/profil" className="flex items-center gap-2">
-              <span className="hidden text-sm sm:block">{profile?.username}</span>
+              <UserName id={userId} name={profile?.username} className="hidden text-sm sm:inline-flex" />
               <Avatar url={profile?.avatar_url} name={profile?.username} />
             </Link>
             </>

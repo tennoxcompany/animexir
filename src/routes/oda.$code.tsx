@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { EmbedPlayer } from "@/components/VideoPlayer";
+import { UserName } from "@/components/UserName";
 
 export const Route = createFileRoute("/oda/$code")({
   head: () => ({
@@ -152,7 +153,7 @@ function Room() {
           <p className="text-xs text-muted-foreground">🟢 {viewers.length} izleyici: {viewers.join(", ")}</p>
         </div>
         <div className="flex-1 space-y-2 overflow-y-auto p-4 text-sm">
-          {msgs.map((m) => <p key={m.id}><b className="text-primary">{m.username ?? "?"}:</b> {m.body}</p>)}
+          {msgs.map((m) => <p key={m.id}><b className="text-primary"><UserName id={m.user_id} name={m.username} />:</b> {m.body}</p>)}
         </div>
         <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
           <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Mesaj yaz..." />

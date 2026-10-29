@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/Header";
+import { UserName } from "@/components/UserName";
 import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
 import { pageHead } from "@/lib/seo";
@@ -81,7 +82,7 @@ function Community() {
             <div key={m.id} className="group flex gap-3">
               <Link to="/kullanici/$id" params={{ id: m.user_id }}><Avatar url={m.profiles?.avatar_url} name={m.profiles?.username} /></Link>
               <div className="min-w-0 flex-1">
-                <p className="text-sm"><Link to="/kullanici/$id" params={{ id: m.user_id }} className="font-bold hover:text-primary">{m.profiles?.username}</Link> <span className="text-xs text-gold">{m.profiles?.badge}</span> <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span></p>
+                <p className="text-sm"><Link to="/kullanici/$id" params={{ id: m.user_id }} className="font-bold hover:text-primary"><UserName id={m.user_id} name={m.profiles?.username} /></Link> <span className="text-xs text-gold">{m.profiles?.badge}</span> <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span></p>
                 <p className="break-words text-sm text-muted-foreground">{m.body}</p>
               </div>
               {(m.user_id === userId || isAdmin) && (

@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/Header";
 import { useAuth } from "@/lib/auth";
+import { UserName } from "@/components/UserName";
+import { useCosmetics } from "@/lib/xir";
 
 export const Route = createFileRoute("/kullanici/$id")({
   head: () => ({
@@ -30,6 +32,7 @@ function UserPage() {
   const [p, setP] = useState<P | null>(null);
   const [f, setF] = useState<F | null>(null);
   const [friends, setFriends] = useState(0);
+  const theme = useCosmetics(id)?.profile_theme;
 
   const loadF = async () => {
     if (!userId || userId === id) return;
@@ -61,18 +64,24 @@ function UserPage() {
   if (!userId) action = <Button asChild variant="hero"><Link to="/giris">Arkadaş eklemek için giriş yap</Link></Button>;
   else if (userId === id) action = <Button asChild variant="glass"><Link to="/profil">Profilimi düzenle</Link></Button>;
   else if (!f) action = <Button variant="hero" onClick={send}>Arkadaş ekle</Button>;
-  else if (f.status === "accepted") action = <Button variant="glass" onClick={remove}>Arkadaşlıktan çıkar</Button>;
+  else if (f.status === "accepted") action = (
+    <div className="flex gap-2">
+      <Button asChild variant="hero" data-testid="profile-send-dm"><Link to="/mesajlar" search={{ to: id }}>Mesaj Gönder</Link></Button>
+      <Button variant="glass" onClick={remove}>Arkadaşlıktan çıkar</Button>
+    </div>
+  );
   else if (f.requester_id === userId) action = <Button variant="glass" onClick={remove}>İsteği geri çek</Button>;
   else action = <div className="flex gap-2"><Button variant="hero" onClick={accept}>Kabul et</Button><Button variant="glass" onClick={remove}>Reddet</Button></div>;
 
   return (
     <div className="mx-auto max-w-4xl px-4 pb-16 pt-24">
-      <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <div className="h-40 bg-cover bg-center sm:h-56" style={{ backgroundImage: p.banner_url ? `url(${p.banner_url})` : `linear-gradient(135deg, ${accent}, transparent)` }} />
+      <div data-testid="user-profile-card" className="overflow-hidden rounded-2xl border border-border bg-card"
+        style={theme ? { background: `linear-gradient(160deg, color-mix(in oklab, ${theme.from} 35%, var(--card)), color-mix(in oklab, ${theme.to} 35%, var(--card)))`, borderColor: theme.from } : undefined}>
+        <div className="h-40 bg-cover bg-center sm:h-56" style={{ backgroundImage: p.banner_url ? `url(${p.banner_url})` : theme ? `linear-gradient(135deg, ${theme.from}, ${theme.to})` : `linear-gradient(135deg, ${accent}, transparent)` }} />
         <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-end">
           <div className="-mt-16"><Avatar url={p.avatar_url} name={p.username} size={96} /></div>
           <div className="flex-1">
-            <h1 className="font-display text-2xl font-bold">{p.username}</h1>
+            <h1 className="font-display text-2xl font-bold"><UserName id={p.id} name={p.username} /></h1>
             {p.badge && <p className="text-sm text-gold">{p.badge}</p>}
             <p className="text-xs text-muted-foreground">{friends} arkadaş</p>
           </div>

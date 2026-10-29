@@ -8,7 +8,7 @@ export type Anime = {
 };
 export type Episode = { id: string; anime_id: string; number: number; title: string | null; video_url: string | null; created_at: string };
 
-export const GENRES = ["Aksiyon", "Macera", "Shounen", "Fantezi", "Doğaüstü", "Gizem", "Dram", "Komedi", "Bilim Kurgu", "Romantik"];
+export { GENRES } from "@/lib/genres";
 
 export async function fetchAnimes() {
   const { data, error } = await supabase.from("animes").select("*, episodes(count)").order("created_at", { ascending: false });

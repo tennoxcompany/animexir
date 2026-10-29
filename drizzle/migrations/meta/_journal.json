@@ -29,6 +29,13 @@
       "when": 1791957450958,
       "tag": "0003_friendships",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793300000000,
+      "tag": "0004_xir_coin_dm",
+      "breakpoints": true
     }
   ]
 }
