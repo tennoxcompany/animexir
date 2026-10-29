@@ -32,7 +32,7 @@ export function useUnreadDms() {
   });
   useEffect(() => {
     if (!userId) return;
-    const ch = supabase.channel(`dm-unread-${userId}`)
+    const ch = supabase.channel(`dm-unread-${userId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "direct_messages", filter: `recipient_id=eq.${userId}` }, () => q.refetch())
       .subscribe();
     return () => { supabase.removeChannel(ch); };

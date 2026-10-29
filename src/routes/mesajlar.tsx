@@ -101,7 +101,7 @@ function Conversation({ me, friend }: { me: string; friend: Friend }) {
   });
 
   useEffect(() => {
-    const ch = supabase.channel(`dm-${me}-${friend.id}`)
+    const ch = supabase.channel(`dm-${me}-${friend.id}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages", filter: `recipient_id=eq.${me}` }, (p) => {
         if ((p.new as Dm).sender_id === friend.id) qc.invalidateQueries({ queryKey: key });
       })
