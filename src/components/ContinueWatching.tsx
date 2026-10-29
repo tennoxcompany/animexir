@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
 import { getProgress } from "@/lib/progress";
+import { episodeParam } from "@/lib/seo";
 
 type Item = {
   animeId: string; title: string; cover: string | null; watchedAt: string;
@@ -57,7 +58,7 @@ export function ContinueWatching() {
       <div className="flex gap-4 overflow-x-auto pb-2">
         {q.data.map((it) => (
           <div key={it.animeId} className="group relative w-72 shrink-0" data-testid={`continue-card-${it.animeId}`}>
-            <Link to="/izle/$episodeId" params={{ episodeId: it.ep.id }} data-testid={`continue-link-${it.animeId}`}>
+            <Link to="/izle/$episodeId" params={{ episodeId: episodeParam(it.ep.id, it.title, it.ep.number) }} data-testid={`continue-link-${it.animeId}`}>
               <div className="relative aspect-video overflow-hidden rounded-xl bg-card">
                 {it.cover && <img src={it.cover} alt={it.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-fade" />
@@ -79,7 +80,7 @@ export function ContinueWatching() {
               </p>
             </Link>
             {it.next && (
-              <Link to="/izle/$episodeId" params={{ episodeId: it.next.id }} data-testid={`continue-next-${it.animeId}`}
+              <Link to="/izle/$episodeId" params={{ episodeId: episodeParam(it.next.id, it.title, it.next.number) }} data-testid={`continue-next-${it.animeId}`}
                 className="text-xs font-medium text-primary hover:underline">
                 Sonraki: {it.next.number}. Bölüm →
               </Link>

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Play } from "lucide-react";
 import { toast } from "sonner";
@@ -7,13 +7,18 @@ import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/FollowButton";
 import { useAuth } from "@/lib/auth";
 import type { Anime, Episode } from "@/lib/data";
-import { NOINDEX, loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
+import { animeParam, breadcrumbLd, episodeParam, idFromParam, NOINDEX, loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/anime/$id")({
-  loader: async ({ params }) => ({ seo: await loadSeoAnime(params.id) }),
+  loader: async ({ params }) => {
+    const seo = await loadSeoAnime(idFromParam(params.id));
+    const canon = seo && animeParam(seo.id, seo.title);
+    if (canon && params.id !== canon) throw redirect({ to: "/anime/$id", params: { id: canon }, statusCode: 301 });
+    return { seo };
+  },
   head: ({ loaderData, params }) => {
     const a = loaderData?.seo;
-    const url = `${SITE_URL}/anime/${params.id}`;
+    const url = `${SITE_URL}/anime/${a ? animeParam(a.id, a.title) : params.id}`;
     if (!a) {
       return {
         meta: [...seoMeta({ title: "Anime Detayı — AnimeXir", description: "Anime bölümleri, puanlar ve izleme listesi AnimeXir'de.", url }), NOINDEX],
@@ -41,6 +46,10 @@ export const Route = createFileRoute("/anime/$id")({
             inLanguage: "tr",
           }),
         },
+        breadcrumbLd([
+          { name: "AnimeXir", url: `${SITE_URL}/` },
+          { name: a.title, url },
+        ]),
       ],
     };
   },
@@ -55,7 +64,7 @@ const STATUSES = [
 ] as const;
 
 function AnimePage() {
-  const { id } = Route.useParams();
+  const id = idFromParam(Route.useParams().id);
   const { userId } = useAuth();
   const qc = useQueryClient();
 
@@ -122,7 +131,7 @@ function AnimePage() {
             </div>
             <p className="mt-4 max-w-2xl text-muted-foreground">{anime.description}</p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {first && <Button asChild variant="hero"><Link to="/izle/$episodeId" params={{ episodeId: first.id }}><Play className="fill-current" /> İzlemeye Başla</Link></Button>}
+              {first && <Button asChild variant="hero"><Link to="/izle/$episodeId" params={{ episodeId: episodeParam(first.id, anime.title, first.number) }}><Play className="fill-current" /> İzlemeye Başla</Link></Button>}
               <FollowButton anime={anime} />
               {STATUSES.map((s) => (
                 <Button key={s.v} variant={mine.data?.status === s.v ? "default" : "glass"} onClick={() => setStatus(s.v)}>{s.l}</Button>
@@ -144,7 +153,7 @@ function AnimePage() {
           <h2 className="mb-4 text-2xl font-bold">Bölümler <span className="text-base font-normal text-muted-foreground">({episodes.length})</span></h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {episodes.map((e) => (
-              <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: e.id }}
+              <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: episodeParam(e.id, anime.title, e.number) }}
                 className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary">
                 <span className="font-display text-2xl font-bold text-primary">{e.number}</span>
                 <div className="min-w-0">

@@ -10,6 +10,7 @@ import { Avatar } from "@/components/Header";
 import { AnimeCard } from "@/components/AnimeCard";
 import { useAuth } from "@/lib/auth";
 import { timeAgo, type Anime } from "@/lib/data";
+import { episodeParam } from "@/lib/seo";
 
 export const Route = createFileRoute("/profil")({
   head: () => ({
@@ -125,7 +126,7 @@ function ProfilePage() {
           <div className="space-y-2">
             {!!eps && <Button variant="outline" size="sm" onClick={clearHistory}>Geçmişi temizle</Button>}
             {history.data?.map((h: any) => (
-              <Link key={h.id} to="/izle/$episodeId" params={{ episodeId: h.episodes?.id }} className="flex justify-between rounded-lg bg-card p-3 text-sm hover:bg-accent">
+              <Link key={h.id} to="/izle/$episodeId" params={{ episodeId: episodeParam(h.episodes?.id, h.episodes?.animes?.title, h.episodes?.number) }} className="flex justify-between rounded-lg bg-card p-3 text-sm hover:bg-accent">
                 <span>{h.episodes?.animes?.title} — {h.episodes?.number}. Bölüm</span>
                 <span className="text-muted-foreground">{timeAgo(h.watched_at)}</span>
               </Link>

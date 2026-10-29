@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Users, Share2 } from "lucide-react";
@@ -10,13 +10,18 @@ import { Avatar } from "@/components/Header";
 import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
-import { NOINDEX, loadSeoEpisode, seoMeta, shortText, SITE_URL } from "@/lib/seo";
+import { animeParam, breadcrumbLd, episodeParam, idFromParam, NOINDEX, loadSeoEpisode, seoMeta, shortText, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/izle/$episodeId")({
-  loader: async ({ params }) => ({ seo: await loadSeoEpisode(params.episodeId) }),
+  loader: async ({ params }) => {
+    const seo = await loadSeoEpisode(idFromParam(params.episodeId));
+    const canon = seo?.animes && episodeParam(seo.id, seo.animes.title, seo.number);
+    if (canon && params.episodeId !== canon) throw redirect({ to: "/izle/$episodeId", params: { episodeId: canon }, statusCode: 301 });
+    return { seo };
+  },
   head: ({ loaderData, params }) => {
     const ep = loaderData?.seo;
-    const url = `${SITE_URL}/izle/${params.episodeId}`;
+    const url = `${SITE_URL}/izle/${ep?.animes ? episodeParam(ep.id, ep.animes.title, ep.number) : params.episodeId}`;
     if (!ep?.animes) {
       return {
         meta: [...seoMeta({ title: "Bölüm İzle — AnimeXir", description: "Full HD anime bölümünü izle, yorum yap ve arkadaşlarınla birlikte izle.", url }), NOINDEX],
@@ -28,16 +33,39 @@ export const Route = createFileRoute("/izle/$episodeId")({
     const epName = ep.title && !/^\d+\. Bölüm$/.test(ep.title) ? ` — ${ep.title}` : "";
     const title = `${a.title} ${ep.number}. Bölüm İzle${epName} | AnimeXir`;
     const description = shortText(`${a.title} ${ep.number}. bölüm ${lang} Full HD izle. Yorum yap, arkadaşlarınla birlikte izle. ${a.description ?? ""}`);
+    const animeUrl = `${SITE_URL}/anime/${animeParam(a.id, a.title)}`;
+    const thumb = a.banner_url || a.cover_url;
     return {
-      meta: seoMeta({ title, description, image: a.banner_url || a.cover_url, url, type: "video.episode" }),
+      meta: seoMeta({ title, description, image: thumb, url, type: "video.episode" }),
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            name: `${a.title} ${ep.number}. Bölüm${epName}`,
+            description,
+            thumbnailUrl: thumb ? [thumb] : undefined,
+            uploadDate: ep.created_at ?? undefined,
+            inLanguage: "tr",
+            url,
+            isPartOf: { "@type": "TVSeries", name: a.title, url: animeUrl },
+          }),
+        },
+        breadcrumbLd([
+          { name: "AnimeXir", url: `${SITE_URL}/` },
+          { name: a.title, url: animeUrl },
+          { name: `${ep.number}. Bölüm`, url },
+        ]),
+      ],
     };
   },
   component: WatchPage,
 });
 
 function WatchPage() {
-  const { episodeId } = Route.useParams();
+  const episodeId = idFromParam(Route.useParams().episodeId);
   const { userId } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -86,7 +114,7 @@ function WatchPage() {
     <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[1fr_320px]">
       <div>
         <p className="mb-3 text-sm text-muted-foreground">
-          <Link to="/anime/$id" params={{ id: ep.anime_id }} className="hover:text-primary">{ep.animes.title}</Link> › {ep.number}. Bölüm
+          <Link to="/anime/$id" params={{ id: animeParam(ep.anime_id, ep.animes.title) }} className="hover:text-primary">{ep.animes.title}</Link> › {ep.number}. Bölüm
         </p>
         {ep.video_url ? (
           <div className="aspect-video overflow-hidden rounded-xl bg-card">
@@ -103,8 +131,8 @@ function WatchPage() {
             <p className="text-muted-foreground">{ep.number}. Bölüm{ep.title ? `: ${ep.title}` : ""}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {prev && <Button variant="glass" asChild><Link to="/izle/$episodeId" params={{ episodeId: prev.id }}><ChevronLeft /> Önceki</Link></Button>}
-            {next && <Button variant="glass" asChild><Link to="/izle/$episodeId" params={{ episodeId: next.id }}>Sonraki <ChevronRight /></Link></Button>}
+            {prev && <Button variant="glass" asChild><Link to="/izle/$episodeId" params={{ episodeId: episodeParam(prev.id, ep.animes.title, prev.number) }}><ChevronLeft /> Önceki</Link></Button>}
+            {next && <Button variant="glass" asChild><Link to="/izle/$episodeId" params={{ episodeId: episodeParam(next.id, ep.animes.title, next.number) }}>Sonraki <ChevronRight /></Link></Button>}
             <Button variant="hero" onClick={party}><Users /> Birlikte İzle</Button>
             <Button variant="glass" onClick={() => { navigator.clipboard.writeText(location.href); toast.success("Bağlantı kopyalandı"); }}><Share2 /></Button>
           </div>
@@ -134,7 +162,7 @@ function WatchPage() {
         <h3 className="mb-3 font-bold">Bölümler</h3>
         <div className="space-y-1">
           {eps.map((e) => (
-            <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: e.id }}
+            <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: episodeParam(e.id, ep.animes.title, e.number) }}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${e.id === ep.id ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`}>
               <span className="w-6 font-bold">{e.number}</span>
               <span className="truncate">{e.title ?? `${e.number}. Bölüm`}</span>

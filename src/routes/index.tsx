@@ -8,7 +8,7 @@ import { AnimeCard } from "@/components/AnimeCard";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { TodayStrip } from "@/components/TodayStrip";
 import { fetchAnimes, fetchLatestEpisodes, GENRES } from "@/lib/data";
-import { OG_IMAGE, pageHead, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/seo";
+import { animeParam, episodeParam, OG_IMAGE, pageHead, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -83,7 +83,7 @@ function Index() {
             <p className="mt-4 line-clamp-3 max-w-xl text-muted-foreground">{hero.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="hero" size="lg">
-                <Link to="/anime/$id" params={{ id: hero.id }}><Play className="fill-current" /> Hemen İzle</Link>
+                <Link to="/anime/$id" params={{ id: animeParam(hero.id, hero.title) }}><Play className="fill-current" /> Hemen İzle</Link>
               </Button>
               <Button asChild variant="glass" size="lg">
                 <Link to="/birlikte-izle"><Users /> Birlikte İzle</Link>
@@ -101,7 +101,7 @@ function Index() {
             <h2 className="mb-5 text-2xl font-bold">Son Eklenen Bölümler</h2>
             <div className="flex gap-4 overflow-x-auto pb-2">
               {latest.data.map((e) => (
-                <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: e.id }} className="group w-64 shrink-0">
+                <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: episodeParam(e.id, e.animes?.title, e.number) }} className="group w-64 shrink-0">
                   <div className="relative aspect-video overflow-hidden rounded-xl bg-card">
                     {e.animes?.cover_url && <img src={e.animes.cover_url} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />}
                     <div className="absolute inset-0 bg-fade" />

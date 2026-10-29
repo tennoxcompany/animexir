@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { Anime } from "@/lib/data";
+import { animeParam } from "@/lib/seo";
 
 export function AnimeCard({ anime, episodes }: { anime: Anime; episodes?: number }) {
   return (
-    <Link to="/anime/$id" params={{ id: anime.id }} className="group block">
+    <Link to="/anime/$id" params={{ id: animeParam(anime.id, anime.title) }} className="group block">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-card">
         {anime.cover_url && (
           <img src={anime.cover_url} alt={anime.title} loading="lazy"

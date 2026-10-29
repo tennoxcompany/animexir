@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { restSelect } from "@/lib/rest";
+import { animeParam, episodeParam } from "@/lib/seo";
 
 const SITE = "https://animexir.lovable.app";
 
@@ -15,11 +16,13 @@ const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 
 // Supabase tek seferde en fazla 1000 satır döndürür; hepsini sayfa sayfa çekiyoruz.
-async function fetchAll(table: "animes" | "episodes") {
-  const rows: { id: string; created_at: string }[] = [];
+type Row = { id: string; created_at: string; title?: string; number?: number; animes?: { title: string } | null };
+
+async function fetchAll(table: "animes" | "episodes", cols: string) {
+  const rows: Row[] = [];
   const size = 1000;
   for (let from = 0; ; from += size) {
-    const data = await restSelect<{ id: string; created_at: string }>(table, "select=id,created_at&order=created_at.desc", [from, from + size - 1]);
+    const data = await restSelect<Row>(table, `select=${cols}&order=created_at.desc`, [from, from + size - 1]);
     rows.push(...data);
     if (data.length < size) break;
   }
@@ -45,9 +48,9 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const parts = STATIC_PAGES.map((p) => url(SITE + p.path, p));
         try {
-          const [animes, episodes] = await Promise.all([fetchAll("animes"), fetchAll("episodes")]);
-          for (const a of animes) parts.push(url(`${SITE}/anime/${a.id}`, { lastmod: a.created_at, changefreq: "weekly", priority: "0.9" }));
-          for (const e of episodes) parts.push(url(`${SITE}/izle/${e.id}`, { lastmod: e.created_at, changefreq: "monthly", priority: "0.6" }));
+          const [animes, episodes] = await Promise.all([fetchAll("animes", "id,created_at,title"), fetchAll("episodes", "id,created_at,number,animes(title)")]);
+          for (const a of animes) parts.push(url(`${SITE}/anime/${animeParam(a.id, a.title)}`, { lastmod: a.created_at, changefreq: "weekly", priority: "0.9" }));
+          for (const e of episodes) parts.push(url(`${SITE}/izle/${episodeParam(e.id, e.animes?.title, e.number)}`, { lastmod: e.created_at, changefreq: "monthly", priority: "0.6" }));
         } catch (err) {
           // Veritabanına ulaşılamazsa en azından sabit sayfaları döndür.
           console.error("sitemap error", err);
