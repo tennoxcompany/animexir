@@ -4,6 +4,7 @@ import { Bell, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar } from "@/components/Header";
 import { markSeen, removeReminder, useReminders, type Reminder } from "@/lib/reminders";
+import { markAnimesSeen, useNewAnimes } from "@/lib/newAnimes";
 
 type R = { id: string; requester_id: string; profiles: { username: string; avatar_url: string | null } | null };
 
@@ -13,6 +14,9 @@ export function NotificationBell({ userId }: { userId: string | null }) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<R[]>([]);
   const rem = useReminders();
+  const { fresh } = useNewAnimes();
+  const [shown, setShown] = useState<typeof fresh>([]);
+  useEffect(() => { if (fresh.length) setShown(fresh); }, [fresh]);
   const ref = useRef<HTMLDivElement>(null);
 
   const load = async () => {
@@ -35,9 +39,9 @@ export function NotificationBell({ userId }: { userId: string | null }) {
 
   const accept = async (id: string) => { await supabase.from("friendships").update({ status: "accepted" }).eq("id", id); load(); };
   const reject = async (id: string) => { await supabase.from("friendships").delete().eq("id", id); load(); };
-  const toggle = () => { if (!open && rem.unseen) markSeen(); setOpen(!open); };
-  const count = items.length + rem.unseen;
-  const empty = !items.length && !rem.aired.length && !rem.upcoming.length;
+  const toggle = () => { if (!open && rem.unseen) markSeen(); if (!open && fresh.length) markAnimesSeen(); setOpen(!open); };
+  const count = items.length + rem.unseen + fresh.length;
+  const empty = !items.length && !rem.aired.length && !rem.upcoming.length && !shown.length;
 
   return (
     <div ref={ref} className="relative">
@@ -56,6 +60,13 @@ export function NotificationBell({ userId }: { userId: string | null }) {
               <button onClick={() => accept(r.id)} className="rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground">Kabul</button>
               <button onClick={() => reject(r.id)} className="rounded-md bg-secondary px-2 py-1 text-xs">Reddet</button>
             </div>
+          ))}
+          {shown.map((a) => (
+            <Link key={a.id} to="/anime/$id" params={{ id: a.id }} onClick={() => setOpen(false)} data-testid={`new-anime-${a.id}`}
+              className="flex items-center gap-2 rounded-lg bg-primary/10 p-2 hover:bg-secondary">
+              {a.cover_url && <img src={a.cover_url} alt="" className="h-11 w-8 shrink-0 rounded object-cover" />}
+              <p className="flex-1 text-xs"><span className="text-primary">Yeni anime eklendi:</span> <b>{a.title}</b></p>
+            </Link>
           ))}
           {rem.aired.map((r) => <ReminderRow key={r.id} r={r} aired onGo={() => setOpen(false)} />)}
           {rem.upcoming.length > 0 && <p className="mt-1 px-2 pt-2 text-xs font-semibold text-muted-foreground">Hatırlatmalarım</p>}

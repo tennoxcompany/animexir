@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { readReminders, syncFollows, write } from "@/lib/reminders";
+import { useNewAnimes } from "@/lib/newAnimes";
 
-function chime() {
+export function chime() {
   try {
     const ctx = new AudioContext();
     [880, 1318.5].forEach((f, i) => {
@@ -27,6 +28,22 @@ function chime() {
 
 export function ReminderWatcher() {
   const navigate = useNavigate();
+  const { all } = useNewAnimes();
+  const known = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    if (!all) return;
+    if (!known.current) { known.current = new Set(all.map((a) => a.id)); return; }
+    const added = all.filter((a) => !known.current!.has(a.id));
+    if (!added.length) return;
+    added.forEach((a) => known.current!.add(a.id));
+    chime();
+    for (const a of added) {
+      toast(`Yeni anime eklendi: ${a.title}`, {
+        duration: 15000,
+        action: { label: "Göster", onClick: () => navigate({ to: "/anime/$id", params: { id: a.id } }) },
+      });
+    }
+  }, [all, navigate]);
   useEffect(() => {
     const check = () => {
       const now = Date.now() / 1000;
