@@ -77,8 +77,10 @@ function ProfilePage() {
   const eps = history.data?.length ?? 0;
 
   const save = async () => {
+    const link = form.avatar_url.trim();
     const { error } = await supabase.from("profiles").update({
-      username: form.username.slice(0, 40), avatar_url: form.avatar_url || null, bio: form.bio.slice(0, 300),
+      username: form.username.slice(0, 40), bio: form.bio.slice(0, 300),
+      ...(link && !link.startsWith("data:") && link !== profile.avatar_url ? { avatar_url: link } : {}),
       badge: isAdmin ? form.badge : BADGES.includes(form.badge) ? form.badge : profile.badge,
     }).eq("id", userId!);
     if (error) return toast.error(error.message);
@@ -148,7 +150,7 @@ function ProfilePage() {
               {BADGES.map((b) => <option key={b}>{b}</option>)}
             </select>
             <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Hakkımda" />
-            <Button variant="hero" onClick={save}>Kaydet</Button>
+            <Button data-testid="profile-save" variant="hero" onClick={save}>Kaydet</Button>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5">

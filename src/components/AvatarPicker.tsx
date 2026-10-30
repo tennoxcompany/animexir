@@ -18,7 +18,7 @@ function squareDataUrl(file: File, size = 256): Promise<string> {
       URL.revokeObjectURL(img.src);
       resolve(canvas.toDataURL("image/jpeg", 0.82));
     };
-    img.onerror = reject;
+    img.onerror = (e) => { URL.revokeObjectURL(img.src); reject(e); };
     img.src = URL.createObjectURL(file);
   });
 }
