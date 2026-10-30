@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { GoogleIdButton } from "@/components/GoogleIdButton";
 import { useAuth } from "@/lib/auth";
 import { pageHead } from "@/lib/seo";
 
@@ -50,7 +51,12 @@ function Login() {
     <div className="mx-auto flex max-w-md flex-col px-4 py-20">
       <h1 className="text-3xl font-bold">{mode === "in" ? "Tekrar hoş geldin" : "AnimeXir'e katıl"}</h1>
       <p className="mt-1 text-muted-foreground">Listeni, yorumlarını ve izleme odalarını kaydet.</p>
-      {import.meta.env["VITE_STATIC_SPA"] === "1" ? (
+      {import.meta.env["VITE_STATIC_SPA"] === "1" && import.meta.env["VITE_GOOGLE_CLIENT_ID"] ? (
+        <>
+          <GoogleIdButton clientId={import.meta.env["VITE_GOOGLE_CLIENT_ID"]} />
+          <div className="my-6 text-center text-xs text-muted-foreground">veya</div>
+        </>
+      ) : import.meta.env["VITE_STATIC_SPA"] === "1" ? (
         <p data-testid="google-login-unavailable" className="mt-8 mb-6 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
           Google ile giriş bu adreste kullanılamıyor; e-posta ve şifrenle giriş yap ya da <a className="text-primary hover:underline" href="https://animexir.lovable.app/giris">animexir.lovable.app</a> adresini kullan.
         </p>

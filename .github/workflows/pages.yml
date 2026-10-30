@@ -31,6 +31,7 @@ jobs:
         env:
           STATIC_SPA: "1"
           VITE_STATIC_SPA: "1"
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
       - run: |
           cd dist/client
           cp _shell.html index.html
