@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
 import { UserBadge, UserName } from "@/components/UserName";
+import { ModMenu } from "@/components/ModMenu";
+import { ChatGuard } from "@/components/ChatGuard";
 import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
@@ -110,18 +112,21 @@ function WatchPage() {
 
         <section className="mt-10">
           <h2 className="mb-4 text-xl font-bold">Yorumlar ({comments.data?.length ?? 0})</h2>
+          <ChatGuard>
           <div className="flex gap-2">
-            <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder={userId ? "Spoiler vermeden yorumunu yaz..." : "Yorum yapmak için giriş yap"} />
-            <Button variant="hero" onClick={send} className="self-end">Gönder</Button>
+            <Textarea data-testid="comment-input" value={body} onChange={(e) => setBody(e.target.value)} placeholder={userId ? "Spoiler vermeden yorumunu yaz..." : "Yorum yapmak için giriş yap"} />
+            <Button data-testid="comment-send" variant="hero" onClick={send} className="self-end">Gönder</Button>
           </div>
+          </ChatGuard>
           <div className="mt-6 space-y-4">
             {comments.data?.map((c: any) => (
               <div key={c.id} className="flex gap-3">
                 <Avatar url={c.profiles?.avatar_url} name={c.profiles?.username} />
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-sm"><b><UserName id={c.user_id} name={c.profiles?.username} /></b> <UserBadge badge={c.profiles?.badge} className="text-xs" /> <span className="text-xs text-muted-foreground">· {timeAgo(c.created_at)}</span></p>
                   <p className="text-sm text-muted-foreground">{c.body}</p>
                 </div>
+                <ModMenu userId={c.user_id} name={c.profiles?.username} message={{ table: "comments", id: c.id, onDeleted: () => qc.invalidateQueries({ queryKey: ["comments", episodeId] }) }} />
               </div>
             ))}
           </div>

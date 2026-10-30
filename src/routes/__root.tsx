@@ -18,6 +18,8 @@ import { ReminderWatcher } from "@/components/ReminderWatcher";
 import { AutoEpisodeSync } from "@/components/AutoEpisodeSync";
 import { Toaster } from "@/components/ui/sonner";
 import { DailyReward, SiteThemeApplier } from "@/components/XirEffects";
+import { BannedScreen } from "@/components/BannedScreen";
+import { useAuth } from "@/lib/auth";
 import { OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo";
 
 function NotFoundComponent() {
@@ -144,6 +146,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <BanGate>
         <Header />
         <main className="min-h-screen pt-16">
           <Outlet />
@@ -156,7 +159,13 @@ function RootComponent() {
         <AutoEpisodeSync />
         <DailyReward />
         <SiteThemeApplier />
+        </BanGate>
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function BanGate({ children }: { children: ReactNode }) {
+  const { sanction } = useAuth();
+  return sanction?.banned ? <BannedScreen /> : <>{children}</>;
 }

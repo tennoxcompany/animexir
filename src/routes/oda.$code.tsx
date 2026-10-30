@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
 import { EmbedPlayer } from "@/components/VideoPlayer";
 import { UserName } from "@/components/UserName";
+import { ModMenu } from "@/components/ModMenu";
+import { ChatGuard } from "@/components/ChatGuard";
 
 export const Route = createFileRoute("/oda/$code")({
   head: () => ({
@@ -55,6 +57,9 @@ function Room() {
       const { data } = await supabase.from("profiles").select("username").eq("id", m.user_id).maybeSingle();
       setMsgs((x) => [...x, { ...m, username: data?.username }]);
     })
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "room_messages" }, (p) => {
+        setMsgs((x) => x.filter((m) => m.id !== (p.old as Msg).id));
+      })
       .on("broadcast", { event: "sync" }, ({ payload }) => {
         const v = video.current; if (!v || isHost) return;
         applying.current = true;
@@ -153,12 +158,19 @@ function Room() {
           <p className="text-xs text-muted-foreground">🟢 {viewers.length} izleyici: {viewers.join(", ")}</p>
         </div>
         <div className="flex-1 space-y-2 overflow-y-auto p-4 text-sm">
-          {msgs.map((m) => <p key={m.id}><b className="text-primary"><UserName id={m.user_id} name={m.username} />:</b> {m.body}</p>)}
+          {msgs.map((m) => (
+            <div key={m.id} className="flex items-start gap-1">
+              <p className="min-w-0 flex-1 break-words"><b className="text-primary"><UserName id={m.user_id} name={m.username} />:</b> {m.body}</p>
+              <ModMenu userId={m.user_id} name={m.username} message={{ table: "room_messages", id: m.id, onDeleted: () => setMsgs((x) => x.filter((y) => y.id !== m.id)) }} />
+            </div>
+          ))}
         </div>
-        <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
-          <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Mesaj yaz..." />
-          <Button variant="hero" type="submit">Gönder</Button>
-        </form>
+        <ChatGuard>
+          <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
+            <Input data-testid="room-chat-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Mesaj yaz..." />
+            <Button data-testid="room-chat-send" variant="hero" type="submit">Gönder</Button>
+          </form>
+        </ChatGuard>
       </aside>
     </div>
   );

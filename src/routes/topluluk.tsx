@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/Header";
 import { UserBadge, UserName } from "@/components/UserName";
+import { ModMenu } from "@/components/ModMenu";
+import { ChatGuard } from "@/components/ChatGuard";
 import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
 import { pageHead } from "@/lib/seo";
@@ -85,18 +87,21 @@ function Community() {
                 <p className="text-sm"><Link to="/kullanici/$id" params={{ id: m.user_id }} className="font-bold hover:text-primary"><UserName id={m.user_id} name={m.profiles?.username} /></Link> <UserBadge badge={m.profiles?.badge} className="text-xs" /> <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span></p>
                 <p className="break-words text-sm text-muted-foreground">{m.body}</p>
               </div>
-              {(m.user_id === userId || isAdmin) && (
+              {m.user_id === userId && (
                 <button onClick={() => supabase.from("community_messages").delete().eq("id", m.id).then()} className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100">Sil</button>
               )}
+              <ModMenu userId={m.user_id} name={m.profiles?.username} message={{ table: "community_messages", id: m.id, onDeleted: () => setMsgs((x) => x.filter((y) => y.id !== m.id)) }} />
             </div>
           ))}
           {!msgs.length && <p className="text-sm text-muted-foreground">İlk mesajı sen yaz!</p>}
           <div ref={end} />
         </div>
-        <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
-          <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={`#${ch} kanalına yaz...`} />
-          <Button variant="hero" type="submit">Gönder</Button>
-        </form>
+        <ChatGuard>
+          <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
+            <Input data-testid="community-input" value={text} onChange={(e) => setText(e.target.value)} placeholder={`#${ch} kanalına yaz...`} />
+            <Button data-testid="community-send" variant="hero" type="submit">Gönder</Button>
+          </form>
+        </ChatGuard>
       </section>
     </div>
   );

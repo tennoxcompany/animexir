@@ -11,6 +11,7 @@ import { fetchAnimes, GENRES } from "@/lib/data";
 import { AniListImport } from "@/components/AniListImport";
 import { AutoEpisodePanel } from "@/components/AutoEpisodeSync";
 import { AutoImportPanel } from "@/components/AutoImportPanel";
+import { UserManager } from "@/components/UserManager";
 
 export const Route = createFileRoute("/yonetim")({
   head: () => ({
@@ -82,6 +83,7 @@ function Admin() {
       <AutoImportPanel onDone={refresh} />
       <AutoEpisodePanel />
       <h1 className="text-3xl font-bold">Yönetici Paneli</h1>
+      <UserManager />
 
       <section className="grid gap-6 md:grid-cols-2">
         <div className="space-y-3 rounded-2xl border border-border bg-card p-6">

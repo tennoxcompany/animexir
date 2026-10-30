@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import type { Sanction } from "@/lib/moderation";
 
 export type Profile = {
   id: string;
@@ -16,28 +17,37 @@ type Ctx = {
   userId: string | null;
   profile: Profile | null;
   isAdmin: boolean;
+  isMod: boolean;
+  isStaff: boolean;
+  sanction: Sanction | null;
   loading: boolean;
   refreshProfile: () => Promise<void>;
 };
 
 const AuthCtx = createContext<Ctx>({
-  session: null, userId: null, profile: null, isAdmin: false, loading: true, refreshProfile: async () => {},
+  session: null, userId: null, profile: null, isAdmin: false, isMod: false, isStaff: false, sanction: null, loading: true, refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMod, setIsMod] = useState(false);
+  const [sanction, setSanction] = useState<Sanction | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = async (uid: string | undefined) => {
-    if (!uid) { setProfile(null); setIsAdmin(false); return; }
-    const [{ data: p }, { data: r }] = await Promise.all([
+    if (!uid) { setProfile(null); setIsAdmin(false); setIsMod(false); setSanction(null); return; }
+    const [{ data: p }, { data: r }, { data: m }, { data: s }] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
       supabase.from("user_roles").select("role").eq("user_id", uid),
+      supabase.from("moderators").select("user_id").eq("user_id", uid).maybeSingle(),
+      supabase.from("user_sanctions").select("user_id, muted_until, banned").eq("user_id", uid).maybeSingle(),
     ]);
     setProfile(p as Profile | null);
     setIsAdmin(!!r?.some((x) => x.role === "admin"));
+    setIsMod(!!m);
+    setSanction((s as Sanction | null) ?? null);
   };
 
   useEffect(() => {
@@ -56,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthCtx.Provider value={{
-      session, userId: session?.user.id ?? null, profile, isAdmin, loading,
+      session, userId: session?.user.id ?? null, profile, isAdmin, isMod, isStaff: isAdmin || isMod, sanction, loading,
       refreshProfile: () => load(session?.user.id),
     }}>
       {children}

@@ -180,6 +180,18 @@ export type Database = {
         Update: { name_color?: string | null; owned?: string[]; profile_theme?: Json | null; site_theme?: Json | null; updated_at?: string; user_id?: string; vip_badge?: boolean }
         Relationships: []
       }
+      moderators: {
+        Row: { created_at: string; granted_by: string | null; user_id: string }
+        Insert: { created_at?: string; granted_by?: string | null; user_id: string }
+        Update: { created_at?: string; granted_by?: string | null; user_id?: string }
+        Relationships: []
+      }
+      user_sanctions: {
+        Row: { banned: boolean; muted_until: string | null; updated_at: string; updated_by: string | null; user_id: string }
+        Insert: { banned?: boolean; muted_until?: string | null; updated_at?: string; updated_by?: string | null; user_id: string }
+        Update: { banned?: boolean; muted_until?: string | null; updated_at?: string; updated_by?: string | null; user_id?: string }
+        Relationships: []
+      }
       user_wallets: {
         Row: { coins: number; created_at: string; last_claim: string | null; user_id: string }
         Insert: { coins?: number; created_at?: string; last_claim?: string | null; user_id: string }
@@ -439,6 +451,10 @@ export type Database = {
     Functions: {
       buy_xir_item: { Args: { _item: string }; Returns: Json }
       claim_daily_reward: { Args: never; Returns: Json }
+      ban_user: { Args: { _on: boolean; _user_id: string }; Returns: undefined }
+      mute_user: { Args: { _minutes: number; _user_id: string }; Returns: undefined }
+      unmute_user: { Args: { _user_id: string }; Returns: undefined }
+      set_moderator: { Args: { _on: boolean; _user_id: string }; Returns: undefined }
       save_xir_cosmetics: {
         Args: { _name_color: string | null; _profile_theme: Json | null; _site_theme: Json | null; _vip_badge: boolean }
         Returns: undefined

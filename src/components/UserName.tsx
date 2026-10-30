@@ -1,14 +1,21 @@
-import { Crown, ShieldCheck } from "lucide-react";
+import { Crown, Shield, ShieldCheck } from "lucide-react";
 import { useCosmetics } from "@/lib/xir";
+import { useIsModerator } from "@/lib/moderation";
 
 export function UserName({ id, name, className = "" }: { id: string | null | undefined; name: string | null | undefined; className?: string }) {
   const c = useCosmetics(id);
+  const mod = useIsModerator(id);
   return (
     <span className={`inline-flex items-center gap-1 ${className}`}>
       <span style={c?.name_color ? { color: c.name_color } : undefined}>{name ?? "?"}</span>
       {c?.vip_badge && (
         <span data-testid="vip-badge" className="inline-flex items-center gap-0.5 rounded-full bg-gold/15 px-1.5 py-px text-[10px] font-bold text-gold">
           <Crown className="h-3 w-3" /> VIP
+        </span>
+      )}
+      {mod && (
+        <span data-testid="mod-badge" title="Moderatör" className="inline-flex items-center gap-0.5 rounded-full bg-sky-500/15 px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-sky-400">
+          <Shield className="h-3 w-3" /> MOD
         </span>
       )}
     </span>
