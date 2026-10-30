@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar } from "@/components/Header";
+import { AvatarPicker } from "@/components/AvatarPicker";
 import { AnimeCard } from "@/components/AnimeCard";
 import { UserBadge, UserName } from "@/components/UserName";
 import { useAuth } from "@/lib/auth";
@@ -93,7 +93,7 @@ function ProfilePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-col items-start gap-6 rounded-2xl border border-border bg-card p-6 md:flex-row md:items-center">
-        <Avatar url={profile.avatar_url} name={profile.username} size={96} />
+        <AvatarPicker compact />
         <div className="flex-1">
           <h1 className="text-3xl font-bold"><UserName id={userId} name={profile.username} /></h1>
           <p className="text-sm"><UserBadge badge={profile.badge} /></p>
@@ -137,8 +137,12 @@ function ProfilePage() {
           </div>
         ) : tab === "edit" ? (
           <div className="max-w-lg space-y-3">
+            <AvatarPicker />
             <Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="Kullanıcı adı" />
-            <Input value={form.avatar_url} onChange={(e) => setForm({ ...form, avatar_url: e.target.value })} placeholder="Avatar görsel bağlantısı (https://...)" />
+            <details className="text-sm text-muted-foreground">
+              <summary className="cursor-pointer select-none">Bağlantıyla eklemek istersen</summary>
+              <Input className="mt-2" value={form.avatar_url.startsWith("data:") ? "" : form.avatar_url} onChange={(e) => setForm({ ...form, avatar_url: e.target.value })} placeholder="Avatar görsel bağlantısı (https://...)" />
+            </details>
             <select value={form.badge} onChange={(e) => setForm({ ...form, badge: e.target.value })} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm">
               {isAdmin && <option value="👑 Kurucu">👑 Kurucu</option>}
               {BADGES.map((b) => <option key={b}>{b}</option>)}
