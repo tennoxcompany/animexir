@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS public.moderators (
 GRANT SELECT ON public.moderators TO anon, authenticated;
 GRANT ALL ON public.moderators TO service_role;
 ALTER TABLE public.moderators ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "moderators read" ON public.moderators;
 CREATE POLICY "moderators read" ON public.moderators FOR SELECT USING (true);
 
 -- Susturma ve yasaklar (yalnızca fonksiyonlarla değişir)
@@ -45,6 +46,7 @@ RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
   )
 $$;
 
+DROP POLICY IF EXISTS "sanctions read own or staff" ON public.user_sanctions;
 CREATE POLICY "sanctions read own or staff" ON public.user_sanctions FOR SELECT TO authenticated
   USING (auth.uid() = user_id OR public.is_staff(auth.uid()));
 
