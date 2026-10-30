@@ -6,10 +6,15 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// STATIC_SPA=1 sadece GitHub Pages (animexir.duckdns.org) derlemesinde açılır; Lovable derlemesini etkilemez.
+const staticSpa = process.env.STATIC_SPA === "1";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    ...(staticSpa ? { spa: { enabled: true } } : {}),
   },
+  ...(staticSpa ? { nitro: false as const } : {}),
 });
