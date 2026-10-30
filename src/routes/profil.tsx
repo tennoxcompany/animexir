@@ -55,7 +55,7 @@ function fileToDataUrl(file: File, maxW: number): Promise<string> {
 }
 
 function ProfilePage() {
-  const { userId, profile, isAdmin, loading, refreshProfile, session } = useAuth();
+  const { userId, profile, isAdmin, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<(typeof TABS)[number]["v"]>("watching");
   const [form, setForm] = useState({ username: "", avatar_url: "", bio: "", badge: "" });
@@ -98,7 +98,7 @@ function ProfilePage() {
           <h1 className="text-3xl font-bold"><UserName id={userId} name={profile.username} /></h1>
           <p className="text-sm"><UserBadge badge={profile.badge} /></p>
           <p className="mt-2 text-sm text-muted-foreground">{profile.bio || "Henüz biyografi yok."}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{session?.user.email} · Katılım {new Date(profile.created_at).getFullYear()}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Katılım {new Date(profile.created_at).getFullYear()}</p>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="glass" data-testid="profile-store-link"><Link to="/magaza">Xir Mağaza</Link></Button>
