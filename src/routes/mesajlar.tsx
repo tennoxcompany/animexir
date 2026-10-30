@@ -12,6 +12,7 @@ import { useUnreadDms } from "@/components/HeaderXir";
 import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
 import { NOINDEX } from "@/lib/seo";
+import { useTyping } from "@/lib/typing";
 
 export const Route = createFileRoute("/mesajlar")({
   validateSearch: (s: Record<string, unknown>) => ({ to: typeof s["to"] === "string" ? (s["to"] as string) : undefined }),
@@ -90,6 +91,7 @@ function Conversation({ me, friend }: { me: string; friend: Friend }) {
   const [text, setText] = useState("");
   const end = useRef<HTMLDivElement>(null);
   const key = ["dm", me, friend.id];
+  const { friendTyping, notifyTyping, stopTyping } = useTyping(me, friend.id);
   const msgs = useQuery({
     queryKey: key,
     queryFn: async () => {
@@ -123,6 +125,7 @@ function Conversation({ me, friend }: { me: string; friend: Friend }) {
     const body = text.trim();
     if (!body) return;
     setText("");
+    stopTyping();
     const { error } = await supabase.from("direct_messages").insert({ sender_id: me, recipient_id: friend.id, body: body.slice(0, 2000) });
     if (error) { setText(body); return toast.error("Mesaj gönderilemedi"); }
     qc.invalidateQueries({ queryKey: key });
@@ -148,10 +151,18 @@ function Conversation({ me, friend }: { me: string; friend: Friend }) {
           );
         })}
         {msgs.data?.length === 0 && <p className="text-center text-sm text-muted-foreground">İlk mesajı sen gönder!</p>}
+        {friendTyping && (
+          <div data-testid="dm-typing-indicator" className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="flex gap-0.5 rounded-2xl bg-secondary px-3 py-2">
+              {[0, 150, 300].map((d) => <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" style={{ animationDelay: `${d}ms` }} />)}
+            </span>
+            {friend.username} yazıyor...
+          </div>
+        )}
         <div ref={end} />
       </div>
       <form onSubmit={send} className="flex gap-2 border-t border-border p-3">
-        <Input data-testid="dm-input" value={text} onChange={(e) => setText(e.target.value)} placeholder={`${friend.username} kişisine yaz...`} maxLength={2000} />
+        <Input data-testid="dm-input" value={text} onChange={(e) => { setText(e.target.value); if (e.target.value.trim()) notifyTyping(); else stopTyping(); }} onBlur={stopTyping} placeholder={`${friend.username} kişisine yaz...`} maxLength={2000} />
         <Button data-testid="dm-send" variant="hero" type="submit"><Send className="h-4 w-4" /></Button>
       </form>
     </section>
