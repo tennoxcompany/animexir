@@ -41,6 +41,7 @@ jobs:
           echo "animexir.duckdns.org" > CNAME
           touch .nojekyll
           curl -fsSL https://animexir.lovable.app/sitemap.xml | sed 's#https://animexir.lovable.app#https://animexir.duckdns.org#g' > sitemap.xml
+      - run: node scripts/static-pages.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist/client

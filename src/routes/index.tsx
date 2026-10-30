@@ -34,7 +34,6 @@ export const Route = createFileRoute("/")({
               "@type": "Organization",
               "@id": `${SITE_URL}/#organization`,
               name: "AnimeXir",
-              alternateName: "Tennox Company",
               url: `${SITE_URL}/`,
               logo: LOGO_URL,
               image: OG_IMAGE,
