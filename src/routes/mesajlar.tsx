@@ -127,7 +127,7 @@ function Conversation({ me, friend }: { me: string; friend: Friend }) {
     setText("");
     stopTyping();
     const { error } = await supabase.from("direct_messages").insert({ sender_id: me, recipient_id: friend.id, body: body.slice(0, 2000) });
-    if (error) { setText(body); return toast.error("Mesaj gönderilemedi"); }
+    if (error) { setText(body); return toast.error(error.message.includes("hızlı") ? error.message : "Mesaj gönderilemedi"); }
     qc.invalidateQueries({ queryKey: key });
   };
 
