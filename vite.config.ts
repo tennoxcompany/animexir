@@ -7,7 +7,7 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // STATIC_SPA=1 sadece GitHub Pages (animexir.duckdns.org) derlemesinde açılır; Lovable derlemesini etkilemez.
-const staticSpa = process.env.STATIC_SPA === "1";
+const staticSpa = process.env["STATIC_SPA"] === "1";
 
 export default defineConfig({
   tanstackStart: {

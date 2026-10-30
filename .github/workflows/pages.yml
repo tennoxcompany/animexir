@@ -30,6 +30,7 @@ jobs:
       - run: bun run build
         env:
           STATIC_SPA: "1"
+          VITE_STATIC_SPA: "1"
       - run: |
           cd dist/client
           cp _shell.html index.html
