@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
 import { AnimeCard } from "@/components/AnimeCard";
-import { UserName } from "@/components/UserName";
+import { UserBadge, UserName } from "@/components/UserName";
 import { useAuth } from "@/lib/auth";
 import { timeAgo, type Anime } from "@/lib/data";
 import { episodeParam } from "@/lib/seo";
@@ -96,7 +96,7 @@ function ProfilePage() {
         <Avatar url={profile.avatar_url} name={profile.username} size={96} />
         <div className="flex-1">
           <h1 className="text-3xl font-bold"><UserName id={userId} name={profile.username} /></h1>
-          <p className="text-sm text-gold">{profile.badge}</p>
+          <p className="text-sm"><UserBadge badge={profile.badge} /></p>
           <p className="mt-2 text-sm text-muted-foreground">{profile.bio || "Henüz biyografi yok."}</p>
           <p className="mt-1 text-xs text-muted-foreground">{session?.user.email} · Katılım {new Date(profile.created_at).getFullYear()}</p>
         </div>

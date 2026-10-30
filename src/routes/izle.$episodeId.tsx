@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/Header";
-import { UserName } from "@/components/UserName";
+import { UserBadge, UserName } from "@/components/UserName";
 import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
@@ -150,7 +150,7 @@ function WatchPage() {
               <div key={c.id} className="flex gap-3">
                 <Avatar url={c.profiles?.avatar_url} name={c.profiles?.username} />
                 <div>
-                  <p className="text-sm"><b><UserName id={c.user_id} name={c.profiles?.username} /></b> <span className="text-xs text-gold">{c.profiles?.badge}</span> <span className="text-xs text-muted-foreground">· {timeAgo(c.created_at)}</span></p>
+                  <p className="text-sm"><b><UserName id={c.user_id} name={c.profiles?.username} /></b> <UserBadge badge={c.profiles?.badge} className="text-xs" /> <span className="text-xs text-muted-foreground">· {timeAgo(c.created_at)}</span></p>
                   <p className="text-sm text-muted-foreground">{c.body}</p>
                 </div>
               </div>

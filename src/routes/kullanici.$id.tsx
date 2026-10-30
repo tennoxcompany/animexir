@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/Header";
 import { useAuth } from "@/lib/auth";
-import { UserName } from "@/components/UserName";
+import { UserBadge, UserName } from "@/components/UserName";
 import { useCosmetics } from "@/lib/xir";
 
 export const Route = createFileRoute("/kullanici/$id")({
@@ -82,7 +82,7 @@ function UserPage() {
           <div className="-mt-16"><Avatar url={p.avatar_url} name={p.username} size={96} /></div>
           <div className="flex-1">
             <h1 className="font-display text-2xl font-bold"><UserName id={p.id} name={p.username} /></h1>
-            {p.badge && <p className="text-sm text-gold">{p.badge}</p>}
+            {p.badge && <p className="text-sm"><UserBadge badge={p.badge} /></p>}
             <p className="text-xs text-muted-foreground">{friends} arkadaş</p>
           </div>
           {action}
