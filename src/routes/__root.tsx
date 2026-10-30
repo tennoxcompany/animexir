@@ -133,6 +133,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  // duckdns/uygulama (PWA) için çevrimdışı sayfa servis çalışanı.
+  useEffect(() => {
+    if (import.meta.env["VITE_STATIC_SPA"] === "1" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/pwabuilder-sw.js").catch(() => {});
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
