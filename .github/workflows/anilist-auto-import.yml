@@ -1,0 +1,27 @@
+name: AniList otomatik anime çekme
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: anilist-auto-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Run auto import
+        run: set -a && . ./.env && set +a && bun scripts/auto-import.ts
+        env:
+          AUTO_IMPORT_EMAIL: ${{ secrets.AUTO_IMPORT_EMAIL }}
+          AUTO_IMPORT_PASSWORD: ${{ secrets.AUTO_IMPORT_PASSWORD }}
