@@ -11,7 +11,7 @@ import { UserBadge, UserName } from "@/components/UserName";
 import { VideoPlayer, EmbedPlayer } from "@/components/VideoPlayer";
 import { useAuth } from "@/lib/auth";
 import { roomCode, timeAgo, type Anime, type Episode } from "@/lib/data";
-import { animeParam, breadcrumbLd, episodeParam, idFromParam, NOINDEX, loadSeoEpisode, seoMeta, shortText, SITE_URL } from "@/lib/seo";
+import { animeParam, episodeHead, episodeParam, idFromParam, NOINDEX, loadSeoEpisode, seoMeta, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/izle/$episodeId")({
   loader: async ({ params }) => {
@@ -29,38 +29,7 @@ export const Route = createFileRoute("/izle/$episodeId")({
         links: [{ rel: "canonical", href: url }],
       };
     }
-    const a = ep.animes;
-    const lang = a.has_dub ? "Türkçe Altyazılı & Dublajlı" : "Türkçe Altyazılı";
-    const epName = ep.title && !/^\d+\. Bölüm$/.test(ep.title) ? ` — ${ep.title}` : "";
-    const title = `${a.title} ${ep.number}. Bölüm İzle${epName} | AnimeXir`;
-    const description = shortText(`${a.title} ${ep.number}. bölüm ${lang} Full HD izle. Yorum yap, arkadaşlarınla birlikte izle. ${a.description ?? ""}`);
-    const animeUrl = `${SITE_URL}/anime/${animeParam(a.id, a.title)}`;
-    const thumb = a.banner_url || a.cover_url;
-    return {
-      meta: seoMeta({ title, description, image: thumb, url, type: "video.episode" }),
-      links: [{ rel: "canonical", href: url }],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "VideoObject",
-            name: `${a.title} ${ep.number}. Bölüm${epName}`,
-            description,
-            thumbnailUrl: thumb ? [thumb] : undefined,
-            uploadDate: ep.created_at ?? undefined,
-            inLanguage: "tr",
-            url,
-            isPartOf: { "@type": "TVSeries", name: a.title, url: animeUrl },
-          }),
-        },
-        breadcrumbLd([
-          { name: "AnimeXir", url: `${SITE_URL}/` },
-          { name: a.title, url: animeUrl },
-          { name: `${ep.number}. Bölüm`, url },
-        ]),
-      ],
-    };
+    return episodeHead({ ...ep, animes: ep.animes });
   },
   component: WatchPage,
 });

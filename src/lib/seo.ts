@@ -6,6 +6,8 @@ export const SITE_DESCRIPTION =
   "AnimeXir ile Türkçe altyazılı ve dublajlı animeleri keşfet. Güncel anime bölümlerini takip et, anime takvimini incele ve arkadaşlarınla birlikte izleme odalarında buluş.";
 export const OG_IMAGE = `${SITE_URL}/og-image.png`;
 export const LOGO_URL = `${SITE_URL}/logo.png`;
+/** Derleme sırasında kapaktan üretilen 1200x630 paylaşım görseli. */
+export const ogImageUrl = (animeId: string) => `${SITE_URL}/og/${animeId}.jpg`;
 
 const TR: Record<string, string> = { ç: "c", ğ: "g", ı: "i", İ: "i", ö: "o", ş: "s", ü: "u", Ç: "c", Ğ: "g", Ö: "o", Ş: "s", Ü: "u" };
 const UUID_TAIL = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -115,4 +117,73 @@ export function seoMeta({ title, description, image, url, type = "website" }: { 
     meta.push({ property: "og:image", content: image }, { name: "twitter:image", content: image });
   }
   return meta;
+}
+
+const langOf = (a: SeoAnime) => (a.has_dub ? "Türkçe Altyazılı & Dublajlı" : "Türkçe Altyazılı");
+
+/** Anime sayfası başlık/açıklama/görsel ve yapılandırılmış veri. */
+export function animeHead(a: SeoAnime, image: string | null = ogImageUrl(a.id)) {
+  const url = `${SITE_URL}/anime/${animeParam(a.id, a.title)}`;
+  const lang = langOf(a);
+  const title = `${a.title} İzle — ${lang} | AnimeXir`;
+  const description = shortText(`${a.title} tüm bölümleri ${lang} Full HD izle. ${a.description ?? ""}`);
+  return {
+    meta: seoMeta({ title, description, image, url, type: "video.tv_show" }),
+    links: [{ rel: "canonical", href: url }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "TVSeries",
+          name: a.title,
+          description: shortText(a.description, 500),
+          image: a.cover_url ?? undefined,
+          genre: a.genres ?? undefined,
+          url,
+          inLanguage: "tr",
+        }),
+      },
+      breadcrumbLd([
+        { name: "AnimeXir", url: `${SITE_URL}/` },
+        { name: a.title, url },
+      ]),
+    ],
+  };
+}
+
+/** Bölüm sayfası başlık/açıklama/görsel ve VideoObject verisi. */
+export function episodeHead(ep: SeoEpisode & { animes: SeoAnime }, image: string | null = ogImageUrl(ep.animes.id)) {
+  const a = ep.animes;
+  const url = `${SITE_URL}/izle/${episodeParam(ep.id, a.title, ep.number)}`;
+  const epName = ep.title && !/^\d+\. Bölüm$/.test(ep.title) ? ` — ${ep.title}` : "";
+  const title = `${a.title} ${ep.number}. Bölüm İzle${epName} | AnimeXir`;
+  const description = shortText(`${a.title} ${ep.number}. bölüm ${langOf(a)} Full HD izle. Yorum yap, arkadaşlarınla birlikte izle. ${a.description ?? ""}`);
+  const animeUrl = `${SITE_URL}/anime/${animeParam(a.id, a.title)}`;
+  const thumb = image || a.banner_url || a.cover_url;
+  return {
+    meta: seoMeta({ title, description, image: thumb, url, type: "video.episode" }),
+    links: [{ rel: "canonical", href: url }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          name: `${a.title} ${ep.number}. Bölüm${epName}`,
+          description,
+          thumbnailUrl: thumb ? [thumb] : undefined,
+          uploadDate: ep.created_at ?? undefined,
+          inLanguage: "tr",
+          url,
+          isPartOf: { "@type": "TVSeries", name: a.title, url: animeUrl },
+        }),
+      },
+      breadcrumbLd([
+        { name: "AnimeXir", url: `${SITE_URL}/` },
+        { name: a.title, url: animeUrl },
+        { name: `${ep.number}. Bölüm`, url },
+      ]),
+    ],
+  };
 }

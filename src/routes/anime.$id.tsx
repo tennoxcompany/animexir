@@ -8,7 +8,7 @@ import { FollowButton } from "@/components/FollowButton";
 import { useAuth } from "@/lib/auth";
 import { GENRES, type Anime, type Episode } from "@/lib/data";
 import { genreSlug } from "@/components/GenreLinks";
-import { animeParam, breadcrumbLd, episodeParam, idFromParam, NOINDEX, loadSeoAnime, seoMeta, shortText, SITE_URL } from "@/lib/seo";
+import { animeHead, animeParam, episodeParam, idFromParam, NOINDEX, loadSeoAnime, seoMeta, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/anime/$id")({
   loader: async ({ params }) => {
@@ -26,33 +26,7 @@ export const Route = createFileRoute("/anime/$id")({
         links: [{ rel: "canonical", href: url }],
       };
     }
-    const lang = a.has_dub ? "Türkçe Altyazılı & Dublajlı" : "Türkçe Altyazılı";
-    const title = `${a.title} İzle — ${lang} | AnimeXir`;
-    const description = shortText(`${a.title} tüm bölümleri ${lang} Full HD izle. ${a.description ?? ""}`);
-    const image = a.banner_url || a.cover_url;
-    return {
-      meta: seoMeta({ title, description, image, url, type: "video.tv_show" }),
-      links: [{ rel: "canonical", href: url }],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "TVSeries",
-            name: a.title,
-            description: shortText(a.description, 500),
-            image: a.cover_url ?? undefined,
-            genre: a.genres ?? undefined,
-            url,
-            inLanguage: "tr",
-          }),
-        },
-        breadcrumbLd([
-          { name: "AnimeXir", url: `${SITE_URL}/` },
-          { name: a.title, url },
-        ]),
-      ],
-    };
+    return animeHead(a);
   },
   component: AnimePage,
 });
