@@ -44,8 +44,21 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+const OLD_HOST = "animexir.lovable.app";
+const NEW_ORIGIN = "https://animexir.duckdns.org";
+const KEEP_ON_OLD_HOST = /^\/(sitemap\.xml|robots\.txt|google[\w-]*\.html)$/;
+
+// Eski lovable.app adresini kalıcı olarak duckdns'e taşır (SEO adres değişikliği).
+function movedResponse(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.hostname !== OLD_HOST || KEEP_ON_OLD_HOST.test(url.pathname)) return null;
+  return Response.redirect(NEW_ORIGIN + url.pathname + url.search, 301);
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const moved = movedResponse(request);
+    if (moved) return moved;
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

@@ -1,6 +1,6 @@
 import { restSelect } from "@/lib/rest";
 
-export const SITE_URL = "https://animexir.lovable.app";
+export const SITE_URL = "https://animexir.duckdns.org";
 export const SITE_TITLE = "AnimeXir — Türkçe Altyazılı ve Dublajlı Anime İzle";
 export const SITE_DESCRIPTION =
   "AnimeXir ile Türkçe altyazılı ve dublajlı animeleri keşfet. Güncel anime bölümlerini takip et, anime takvimini incele ve arkadaşlarınla birlikte izleme odalarında buluş.";

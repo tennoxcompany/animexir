@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { restSelect } from "@/lib/rest";
-import { animeParam, episodeParam, slugify } from "@/lib/seo";
+import { animeParam, episodeParam, slugify, SITE_URL as SITE } from "@/lib/seo";
 import { GENRES } from "@/lib/genres";
 
-const SITE = "https://animexir.lovable.app";
 
 const STATIC_PAGES = [
   { path: "/", changefreq: "daily", priority: "1.0" },

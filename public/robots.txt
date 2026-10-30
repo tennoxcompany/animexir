@@ -4,4 +4,4 @@ Disallow: /yonetim
 Disallow: /profil
 Disallow: /sifre-sifirla
 
-Sitemap: https://animexir.lovable.app/sitemap.xml
+Sitemap: https://animexir.duckdns.org/sitemap.xml
