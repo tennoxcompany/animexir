@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { fetchAnimes, GENRES } from "@/lib/data";
 import { AniListImport } from "@/components/AniListImport";
 import { AutoEpisodePanel } from "@/components/AutoEpisodeSync";
+import { AutoImportPanel } from "@/components/AutoImportPanel";
 
 export const Route = createFileRoute("/yonetim")({
   head: () => ({
@@ -78,6 +79,7 @@ function Admin() {
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-4 py-10">
       <AniListImport onDone={refresh} />
+      <AutoImportPanel onDone={refresh} />
       <AutoEpisodePanel />
       <h1 className="text-3xl font-bold">Yönetici Paneli</h1>
 
