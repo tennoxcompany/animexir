@@ -32,7 +32,10 @@ export function useModerators() {
   });
 }
 
-export const useIsModerator = (id: string | null | undefined) => !!id && !!useModerators().data?.has(id);
+export function useIsModerator(id: string | null | undefined) {
+  const mods = useModerators().data;
+  return !!id && !!mods?.has(id);
+}
 
 const ERRORS: [string, string][] = [
   ["yonetici", "Yöneticiye işlem yapılamaz"],
