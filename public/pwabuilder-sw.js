@@ -20,6 +20,18 @@ self.addEventListener('install', async (event) => {
   );
 });
 
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || "/";
+  event.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const w of wins) {
+      if ("focus" in w) { await w.focus(); if ("navigate" in w) await w.navigate(url); return; }
+    }
+    await self.clients.openWindow(url);
+  })());
+});
+
 if (workbox.navigationPreload.isSupported()) {
   workbox.navigationPreload.enable();
 }

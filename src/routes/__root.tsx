@@ -16,6 +16,7 @@ import { AuthProvider } from "@/lib/auth";
 import { Header } from "@/components/Header";
 import { ReminderWatcher } from "@/components/ReminderWatcher";
 import { AutoEpisodeSync } from "@/components/AutoEpisodeSync";
+import { ModAlertWatcher } from "@/components/ModAlertWatcher";
 import { Toaster } from "@/components/ui/sonner";
 import { DailyReward, SiteThemeApplier } from "@/components/XirEffects";
 import { BannedScreen } from "@/components/BannedScreen";
@@ -157,6 +158,7 @@ function RootComponent() {
         <Toaster theme="dark" />
         <ReminderWatcher />
         <AutoEpisodeSync />
+        <ModAlertWatcher />
         <DailyReward />
         <SiteThemeApplier />
         </BanGate>

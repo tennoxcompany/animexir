@@ -12,6 +12,8 @@ import { ChatGuard } from "@/components/ChatGuard";
 import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
 import { pageHead } from "@/lib/seo";
+import { Bell, Lock } from "lucide-react";
+import { MOD_CHANNEL, enableDeviceNotifications, everyoneText, isEveryone } from "@/lib/modChannel";
 
 export const Route = createFileRoute("/topluluk")({
   head: () => pageHead("/topluluk", "Topluluk Sohbeti — AnimeXir", "AnimeXir topluluğu: genel sohbet, yeni bölümler, anime önerileri ve Türkçe dublaj kanalları."),
@@ -23,12 +25,16 @@ const CHANNELS = [
   { id: "yeni-bolumler", d: "Yeni çıkan bölümler hakkında" },
   { id: "anime-onerileri", d: "Ne izlesem? Öneriler burada" },
   { id: "turkce-dublaj", d: "Türkçe dublaj sohbetleri" },
+  { id: MOD_CHANNEL, d: "Sadece moderatörler ve yönetici görebilir", staff: true },
 ];
 type M = { id: string; body: string; user_id: string; created_at: string; profiles?: { username: string; avatar_url: string | null; badge: string | null } | null };
 
 function Community() {
-  const { userId, isAdmin } = useAuth();
+  const { userId, isAdmin, isStaff } = useAuth();
+  const channels = CHANNELS.filter((c) => !c.staff || isStaff);
   const [ch, setCh] = useState(CHANNELS[0]!.id);
+  const [perm, setPerm] = useState(() => (typeof Notification === "undefined" ? "unsupported" : Notification.permission));
+  useEffect(() => { if (!isStaff && ch === MOD_CHANNEL) setCh(CHANNELS[0]!.id); }, [isStaff, ch]);
   const [msgs, setMsgs] = useState<M[]>([]);
   const [text, setText] = useState("");
   const end = useRef<HTMLDivElement>(null);
@@ -54,6 +60,8 @@ function Community() {
     e.preventDefault();
     if (!userId) return toast.error("Mesaj için giriş yap");
     if (!text.trim()) return;
+    if (isEveryone(text) && (!isAdmin || ch !== MOD_CHANNEL)) return toast.error("/everyone sadece yönetici tarafından #mod-kanali içinde kullanılabilir");
+    if (isEveryone(text) && !everyoneText(text)) return toast.error("Duyuru metnini yaz: /everyone mesajın");
     if (!isAdmin && Date.now() - lastSent.current < 2000) return toast.error("Yavaşla! 2 saniyede bir mesaj atabilirsin.");
     lastSent.current = Date.now();
     const { error } = await supabase.from("community_messages").insert({ channel: ch, user_id: userId, body: text.trim() });
@@ -66,10 +74,10 @@ function Community() {
     <div className="mx-auto grid max-w-6xl gap-4 px-4 py-8 md:grid-cols-[220px_1fr]">
       <aside className="space-y-1">
         <h1 className="mb-3 text-xl font-bold">Topluluk</h1>
-        {CHANNELS.map((c) => (
-          <button key={c.id} onClick={() => setCh(c.id)}
-            className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${ch === c.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"}`}>
-            # {c.id}
+        {channels.map((c) => (
+          <button key={c.id} onClick={() => setCh(c.id)} data-testid={`channel-${c.id}`}
+            className={`flex w-full items-center gap-1 rounded-lg px-3 py-2 text-left text-sm ${ch === c.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"}`}>
+            {c.staff ? <Lock className="h-3.5 w-3.5" /> : "#"} {c.id}
           </button>
         ))}
         <p className="pt-4 text-xs text-muted-foreground">Saygılı olalım, spoiler vermeden önce uyaralım.</p>
@@ -77,7 +85,14 @@ function Community() {
       <section className="flex h-[75vh] flex-col rounded-xl border border-border bg-card">
         <div className="border-b border-border p-4">
           <p className="font-bold"># {active.id}</p>
-          <p className="text-xs text-muted-foreground">{active.d}</p>
+          <p className="text-xs text-muted-foreground">{active.d}{ch === MOD_CHANNEL && isAdmin && " · Tüm modlara bildirim için: /everyone mesajın"}</p>
+          {ch === MOD_CHANNEL && perm === "default" && (
+            <button data-testid="enable-device-notifications" onClick={() => enableDeviceNotifications().then(setPerm)}
+              className="mt-2 flex items-center gap-1 rounded-md bg-primary/15 px-2 py-1 text-xs text-primary hover:bg-primary/25">
+              <Bell className="h-3.5 w-3.5" /> Cihaz bildirimlerini aç
+            </button>
+          )}
+          {ch === MOD_CHANNEL && perm === "denied" && <p className="mt-2 text-xs text-muted-foreground">Bildirimler tarayıcıda engelli. Site ayarlarından izin ver.</p>}
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {msgs.map((m) => (
@@ -85,7 +100,9 @@ function Community() {
               <Link to="/kullanici/$id" params={{ id: m.user_id }}><Avatar url={m.profiles?.avatar_url} name={m.profiles?.username} /></Link>
               <div className="min-w-0 flex-1">
                 <p className="text-sm"><Link to="/kullanici/$id" params={{ id: m.user_id }} className="font-bold hover:text-primary"><UserName id={m.user_id} name={m.profiles?.username} /></Link> <UserBadge badge={m.profiles?.badge} className="text-xs" /> <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span></p>
-                <p className="break-words text-sm text-muted-foreground">{m.body}</p>
+                {isEveryone(m.body)
+                  ? <p className="break-words rounded-md border-l-2 border-primary bg-primary/10 px-2 py-1 text-sm"><span className="font-bold text-primary">@everyone</span> {everyoneText(m.body)}</p>
+                  : <p className="break-words text-sm text-muted-foreground">{m.body}</p>}
               </div>
               {m.user_id === userId && (
                 <button onClick={() => supabase.from("community_messages").delete().eq("id", m.id).then()} className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100">Sil</button>
