@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarClock, Clapperboard, History, ListChecks, LogOut, MessageCircle, Settings, Shield, ShoppingBag, UserCircle, Users } from "lucide-react";
+import { CalendarClock, Clapperboard, Headset, History, ListChecks, LogOut, MessageCircle, Settings, Shield, ShoppingBag, UserCircle, Users } from "lucide-react";
 import { cloneElement, type ComponentType } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -31,6 +31,7 @@ export function ProfileMenu() {
     { icon: CalendarClock, label: "Yayın Takvimi", id: "calendar", link: <Link to="/takvim" /> },
     { icon: ShoppingBag, label: "Xir Mağaza", id: "shop", link: <Link to="/magaza" /> },
     { icon: Settings, label: "Hesap Ayarları", id: "settings", link: <Link to="/profil" search={{ tab: "edit" }} /> },
+    { icon: Headset, label: "Destek Merkezi", id: "support", link: <a href="https://animexirdestek.duckdns.org" /> },
   ];
   if (isAdmin) items.push({ icon: Shield, label: "Yönetim", id: "admin", link: <Link to="/yonetim" /> });
 
