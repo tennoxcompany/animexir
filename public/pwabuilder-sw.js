@@ -20,6 +20,18 @@ self.addEventListener('install', async (event) => {
   );
 });
 
+self.addEventListener("push", (event) => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch { d = { body: event.data && event.data.text() }; }
+  event.waitUntil(self.registration.showNotification(d.title || "AnimeXir", {
+    body: d.body || "",
+    icon: "/icon-192.png",
+    badge: "/favicon-96.png",
+    tag: d.tag,
+    data: { url: d.url || "/" },
+  }));
+});
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const url = (event.notification.data && event.notification.data.url) || "/";

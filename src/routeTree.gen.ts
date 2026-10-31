@@ -25,6 +25,8 @@ import { Route as IzleEpisodeIdRouteImport } from './routes/izle.$episodeId'
 import { Route as KullaniciIdRouteImport } from './routes/kullanici.$id'
 import { Route as OdaCodeRouteImport } from './routes/oda.$code'
 import { Route as TurGenreRouteImport } from './routes/tur.$genre'
+import { Route as ApiPushEveryoneRouteImport } from './routes/api.push.everyone'
+import { Route as ApiPushKeyRouteImport } from './routes/api.push.key'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -106,6 +108,16 @@ const TurGenreRoute = TurGenreRouteImport.update({
   path: '/tur/$genre',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPushEveryoneRoute = ApiPushEveryoneRouteImport.update({
+  id: '/api/push/everyone',
+  path: '/api/push/everyone',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPushKeyRoute = ApiPushKeyRouteImport.update({
+  id: '/api/push/key',
+  path: '/api/push/key',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +136,8 @@ export interface FileRoutesByFullPath {
   '/kullanici/$id': typeof KullaniciIdRoute
   '/oda/$code': typeof OdaCodeRoute
   '/tur/$genre': typeof TurGenreRoute
+  '/api/push/everyone': typeof ApiPushEveryoneRoute
+  '/api/push/key': typeof ApiPushKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +156,8 @@ export interface FileRoutesByTo {
   '/kullanici/$id': typeof KullaniciIdRoute
   '/oda/$code': typeof OdaCodeRoute
   '/tur/$genre': typeof TurGenreRoute
+  '/api/push/everyone': typeof ApiPushEveryoneRoute
+  '/api/push/key': typeof ApiPushKeyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +177,8 @@ export interface FileRoutesById {
   '/kullanici/$id': typeof KullaniciIdRoute
   '/oda/$code': typeof OdaCodeRoute
   '/tur/$genre': typeof TurGenreRoute
+  '/api/push/everyone': typeof ApiPushEveryoneRoute
+  '/api/push/key': typeof ApiPushKeyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,6 +199,8 @@ export interface FileRouteTypes {
     | '/kullanici/$id'
     | '/oda/$code'
     | '/tur/$genre'
+    | '/api/push/everyone'
+    | '/api/push/key'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -199,6 +219,8 @@ export interface FileRouteTypes {
     | '/kullanici/$id'
     | '/oda/$code'
     | '/tur/$genre'
+    | '/api/push/everyone'
+    | '/api/push/key'
   id:
     | '__root__'
     | '/'
@@ -217,6 +239,8 @@ export interface FileRouteTypes {
     | '/kullanici/$id'
     | '/oda/$code'
     | '/tur/$genre'
+    | '/api/push/everyone'
+    | '/api/push/key'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -236,6 +260,8 @@ export interface RootRouteChildren {
   KullaniciIdRoute: typeof KullaniciIdRoute
   OdaCodeRoute: typeof OdaCodeRoute
   TurGenreRoute: typeof TurGenreRoute
+  ApiPushEveryoneRoute: typeof ApiPushEveryoneRoute
+  ApiPushKeyRoute: typeof ApiPushKeyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -352,6 +378,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TurGenreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/push/everyone': {
+      id: '/api/push/everyone'
+      path: '/api/push/everyone'
+      fullPath: '/api/push/everyone'
+      preLoaderRoute: typeof ApiPushEveryoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/push/key': {
+      id: '/api/push/key'
+      path: '/api/push/key'
+      fullPath: '/api/push/key'
+      preLoaderRoute: typeof ApiPushKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -372,6 +412,8 @@ const rootRouteChildren: RootRouteChildren = {
   KullaniciIdRoute: KullaniciIdRoute,
   OdaCodeRoute: OdaCodeRoute,
   TurGenreRoute: TurGenreRoute,
+  ApiPushEveryoneRoute: ApiPushEveryoneRoute,
+  ApiPushKeyRoute: ApiPushKeyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

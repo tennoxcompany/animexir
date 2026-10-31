@@ -13,7 +13,7 @@ import { useAuth } from "@/lib/auth";
 import { timeAgo } from "@/lib/data";
 import { pageHead } from "@/lib/seo";
 import { Bell, Lock } from "lucide-react";
-import { MOD_CHANNEL, enableDeviceNotifications, everyoneText, isEveryone } from "@/lib/modChannel";
+import { MOD_CHANNEL, enableDeviceNotifications, everyoneText, isEveryone, pushEveryone } from "@/lib/modChannel";
 
 export const Route = createFileRoute("/topluluk")({
   head: () => pageHead("/topluluk", "Topluluk Sohbeti — AnimeXir", "AnimeXir topluluğu: genel sohbet, yeni bölümler, anime önerileri ve Türkçe dublaj kanalları."),
@@ -64,8 +64,14 @@ function Community() {
     if (isEveryone(text) && !everyoneText(text)) return toast.error("Duyuru metnini yaz: /everyone mesajın");
     if (!isAdmin && Date.now() - lastSent.current < 2000) return toast.error("Yavaşla! 2 saniyede bir mesaj atabilirsin.");
     lastSent.current = Date.now();
-    const { error } = await supabase.from("community_messages").insert({ channel: ch, user_id: userId, body: text.trim() });
-    if (error) toast.error(error.message); else setText("");
+    const { data, error } = await supabase.from("community_messages").insert({ channel: ch, user_id: userId, body: text.trim() }).select("id").single();
+    if (error) return toast.error(error.message);
+    setText("");
+    if (ch === MOD_CHANNEL && isEveryone(text)) {
+      pushEveryone(data.id)
+        .then((r) => (r.error ? toast.error(`Bildirim gönderilemedi: ${r.error}`) : toast.success(`Bildirim ${r.sent ?? 0} cihaza gönderildi`)))
+        .catch(() => toast.error("Bildirim sunucusuna ulaşılamadı"));
+    }
   };
 
   const active = CHANNELS.find((c) => c.id === ch)!;
@@ -92,6 +98,7 @@ function Community() {
               <Bell className="h-3.5 w-3.5" /> Cihaz bildirimlerini aç
             </button>
           )}
+          {ch === MOD_CHANNEL && perm !== "granted" && <p className="mt-1 text-[11px] text-muted-foreground">iPhone'da bildirim için önce siteyi Paylaş → Ana Ekrana Ekle ile yükle.</p>}
           {ch === MOD_CHANNEL && perm === "denied" && <p className="mt-2 text-xs text-muted-foreground">Bildirimler tarayıcıda engelli. Site ayarlarından izin ver.</p>}
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto p-4">

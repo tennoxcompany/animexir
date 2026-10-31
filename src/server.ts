@@ -46,7 +46,7 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 const OLD_HOST = "animexir.lovable.app";
 const NEW_ORIGIN = "https://animexir.duckdns.org";
-const KEEP_ON_OLD_HOST = /^\/(sitemap\.xml|robots\.txt|google[\w-]*\.html)$/;
+const KEEP_ON_OLD_HOST = /^\/(sitemap\.xml|robots\.txt|google[\w-]*\.html|api\/push\/.*)$/;
 
 // Eski lovable.app adresini kalıcı olarak duckdns'e taşır (SEO adres değişikliği).
 function movedResponse(request: Request): Response | null {
