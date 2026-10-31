@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import { CoinChip, DmLink } from "@/components/HeaderXir";
-import { UserName } from "@/components/UserName";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 const links = [
   { to: "/", label: "Keşfet" },
@@ -13,7 +13,7 @@ const links = [
 ] as const;
 
 export function Header() {
-  const { profile, isAdmin, userId } = useAuth();
+  const { isAdmin, userId } = useAuth();
   return (
     <header className="glass fixed inset-x-0 top-0 z-50 border-b border-border">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
@@ -37,12 +37,7 @@ export function Header() {
           {userId && <DmLink />}
           <NotificationBell userId={userId} />
           {userId ? (
-            <>
-            <Link to="/profil" className="flex items-center gap-2">
-              <UserName id={userId} name={profile?.username} className="hidden text-sm sm:inline-flex" />
-              <Avatar url={profile?.avatar_url} name={profile?.username} />
-            </Link>
-            </>
+            <ProfileMenu />
           ) : (
             <Button asChild variant="hero" size="sm"><Link to="/giris">Giriş Yap</Link></Button>
           )}

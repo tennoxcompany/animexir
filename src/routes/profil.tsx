@@ -24,12 +24,15 @@ export const Route = createFileRoute("/profil")({
     ],
   }),
   component: ProfilePage,
+  validateSearch: (s: Record<string, unknown>): { tab?: Tab } =>
+    (TABS.some((t) => t.v === s["tab"]) ? { tab: s["tab"] as Tab } : {}),
 });
 
 const TABS = [
   { v: "watching", l: "İzliyorum" }, { v: "completed", l: "Bitirdim" }, { v: "plan", l: "Listem" },
   { v: "dropped", l: "Bıraktım" }, { v: "history", l: "Geçmiş" }, { v: "edit", l: "Düzenle" },
 ] as const;
+type Tab = (typeof TABS)[number]["v"];
 const BADGES = ["AnimeXir Üyesi", "Anime Sever ⚡", "Otaku Ustası 🎌", "Efsanevi Büyücü ✨", "Korsan Kralı 🏴‍☠️", "Hokage Adayı 🍥", "Gölge Hükümdarı 👑", "Özel Seviye Avcı ⚡"];
 const ACCENTS = [
   { name: "Kırmızı", value: "#e11d48" }, { name: "Turuncu", value: "#f97316" }, { name: "Altın", value: "#eab308" },
@@ -57,7 +60,9 @@ function fileToDataUrl(file: File, maxW: number): Promise<string> {
 function ProfilePage() {
   const { userId, profile, isAdmin, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<(typeof TABS)[number]["v"]>("watching");
+  const search = Route.useSearch();
+  const [tab, setTab] = useState<Tab>(search.tab ?? "watching");
+  useEffect(() => { if (search.tab) setTab(search.tab); }, [search.tab]);
   const [form, setForm] = useState({ username: "", avatar_url: "", bio: "", badge: "" });
 
   useEffect(() => { if (!loading && !userId) navigate({ to: "/giris" }); }, [loading, userId, navigate]);
