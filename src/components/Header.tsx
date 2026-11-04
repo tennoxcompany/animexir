@@ -7,6 +7,7 @@ import { ProfileMenu } from "@/components/ProfileMenu";
 
 const links = [
   { to: "/", label: "Keşfet" },
+  { to: "/animeler", label: "Animeler" },
   { to: "/birlikte-izle", label: "Birlikte İzle" },
   { to: "/takvim", label: "Takvim" },
   { to: "/topluluk", label: "Topluluk" },

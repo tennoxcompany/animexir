@@ -62,6 +62,42 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_import_settings: {
+        Row: {
+          enabled: boolean
+          id: number
+          last_added: number
+          last_error: string | null
+          last_run_at: string | null
+          last_updated: number
+          page: number
+          phase: string
+          total_added: number
+        }
+        Insert: {
+          enabled?: boolean
+          id?: number
+          last_added?: number
+          last_error?: string | null
+          last_run_at?: string | null
+          last_updated?: number
+          page?: number
+          phase?: string
+          total_added?: number
+        }
+        Update: {
+          enabled?: boolean
+          id?: number
+          last_added?: number
+          last_error?: string | null
+          last_run_at?: string | null
+          last_updated?: number
+          page?: number
+          phase?: string
+          total_added?: number
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           body: string
@@ -133,6 +169,33 @@ export type Database = {
           },
         ]
       }
+      direct_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
       episodes: {
         Row: {
           anime_id: string
@@ -168,35 +231,28 @@ export type Database = {
           },
         ]
       }
-      direct_messages: {
-        Row: { body: string; created_at: string; id: string; read_at: string | null; recipient_id: string; sender_id: string }
-        Insert: { body: string; created_at?: string; id?: string; read_at?: string | null; recipient_id: string; sender_id: string }
-        Update: { body?: string; created_at?: string; id?: string; read_at?: string | null; recipient_id?: string; sender_id?: string }
-        Relationships: []
-      }
-      user_cosmetics: {
-        Row: { name_color: string | null; owned: string[]; profile_theme: Json | null; site_theme: Json | null; updated_at: string; user_id: string; vip_badge: boolean }
-        Insert: { name_color?: string | null; owned?: string[]; profile_theme?: Json | null; site_theme?: Json | null; updated_at?: string; user_id: string; vip_badge?: boolean }
-        Update: { name_color?: string | null; owned?: string[]; profile_theme?: Json | null; site_theme?: Json | null; updated_at?: string; user_id?: string; vip_badge?: boolean }
-        Relationships: []
-      }
-      moderators: {
-        Row: { created_at: string; granted_by: string | null; user_id: string }
-        Insert: { created_at?: string; granted_by?: string | null; user_id: string }
-        Update: { created_at?: string; granted_by?: string | null; user_id?: string }
-        Relationships: []
-      }
-      user_sanctions: {
-        Row: { banned: boolean; muted_until: string | null; updated_at: string; updated_by: string | null; user_id: string }
-        Insert: { banned?: boolean; muted_until?: string | null; updated_at?: string; updated_by?: string | null; user_id: string }
-        Update: { banned?: boolean; muted_until?: string | null; updated_at?: string; updated_by?: string | null; user_id?: string }
-        Relationships: []
-      }
-      user_wallets: {
-        Row: { coins: number; created_at: string; last_claim: string | null; user_id: string }
-        Insert: { coins?: number; created_at?: string; last_claim?: string | null; user_id: string }
-        Update: { coins?: number; created_at?: string; last_claim?: string | null; user_id?: string }
-        Relationships: []
+      everyone_pushes: {
+        Row: {
+          message_id: string
+          sent_at: string
+        }
+        Insert: {
+          message_id: string
+          sent_at?: string
+        }
+        Update: {
+          message_id?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "everyone_pushes_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: true
+            referencedRelation: "community_messages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       friendships: {
         Row: {
@@ -219,6 +275,24 @@ export type Database = {
           id?: string
           requester_id?: string
           status?: string
+        }
+        Relationships: []
+      }
+      moderators: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -252,6 +326,48 @@ export type Database = {
           created_at?: string
           id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      push_config: {
+        Row: {
+          id: number
+          private_key: string
+          public_key: string
+        }
+        Insert: {
+          id?: number
+          private_key: string
+          public_key: string
+        }
+        Update: {
+          id?: number
+          private_key?: string
+          public_key?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          p256dh: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          p256dh?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -368,6 +484,102 @@ export type Database = {
           },
         ]
       }
+      support_ticket_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          note: string | null
+          status: string
+          ticket_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          status: string
+          ticket_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          status?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_ticket_events_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_ticket_events_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          handled_by: string | null
+          id: string
+          mod_note: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          category: string
+          created_at?: string
+          handled_by?: string | null
+          id?: string
+          mod_note?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          handled_by?: string | null
+          id?: string
+          mod_note?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_anime: {
         Row: {
           anime_id: string
@@ -397,6 +609,36 @@ export type Database = {
           },
         ]
       }
+      user_cosmetics: {
+        Row: {
+          name_color: string | null
+          owned: string[]
+          profile_theme: Json | null
+          site_theme: Json | null
+          updated_at: string
+          user_id: string
+          vip_badge: boolean
+        }
+        Insert: {
+          name_color?: string | null
+          owned?: string[]
+          profile_theme?: Json | null
+          site_theme?: Json | null
+          updated_at?: string
+          user_id: string
+          vip_badge?: boolean
+        }
+        Update: {
+          name_color?: string | null
+          owned?: string[]
+          profile_theme?: Json | null
+          site_theme?: Json | null
+          updated_at?: string
+          user_id?: string
+          vip_badge?: boolean
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -411,6 +653,51 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_sanctions: {
+        Row: {
+          banned: boolean
+          muted_until: string | null
+          updated_at: string
+          updated_by: string | null
+          user_id: string
+        }
+        Insert: {
+          banned?: boolean
+          muted_until?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          user_id: string
+        }
+        Update: {
+          banned?: boolean
+          muted_until?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_wallets: {
+        Row: {
+          coins: number
+          created_at: string
+          last_claim: string | null
+          user_id: string
+        }
+        Insert: {
+          coins?: number
+          created_at?: string
+          last_claim?: string | null
+          user_id: string
+        }
+        Update: {
+          coins?: number
+          created_at?: string
+          last_claim?: string | null
           user_id?: string
         }
         Relationships: []
@@ -449,16 +736,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      buy_xir_item: { Args: { _item: string }; Returns: Json }
-      claim_daily_reward: { Args: never; Returns: Json }
+      assert_can_sanction: { Args: { _target: string }; Returns: undefined }
       ban_user: { Args: { _on: boolean; _user_id: string }; Returns: undefined }
-      mute_user: { Args: { _minutes: number; _user_id: string }; Returns: undefined }
-      unmute_user: { Args: { _user_id: string }; Returns: undefined }
-      set_moderator: { Args: { _on: boolean; _user_id: string }; Returns: undefined }
-      save_xir_cosmetics: {
-        Args: { _name_color: string | null; _profile_theme: Json | null; _site_theme: Json | null; _vip_badge: boolean }
-        Returns: undefined
-      }
+      buy_xir_item: { Args: { _item: string }; Returns: Json }
+      can_chat: { Args: { _user_id: string }; Returns: boolean }
+      claim_daily_reward: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -466,6 +748,36 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_banned: { Args: { _user_id: string }; Returns: boolean }
+      is_moderator: { Args: { _user_id: string }; Returns: boolean }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      mute_user: {
+        Args: { _minutes: number; _user_id: string }
+        Returns: undefined
+      }
+      save_push_subscription: {
+        Args: { _auth: string; _endpoint: string; _p256dh: string }
+        Returns: undefined
+      }
+      save_xir_cosmetics: {
+        Args: {
+          _name_color: string
+          _profile_theme: Json
+          _site_theme: Json
+          _vip_badge: boolean
+        }
+        Returns: undefined
+      }
+      set_moderator: {
+        Args: { _on: boolean; _user_id: string }
+        Returns: undefined
+      }
+      unmute_user: { Args: { _user_id: string }; Returns: undefined }
+      update_support_ticket: {
+        Args: { _id: string; _note: string; _status: string }
+        Returns: undefined
+      }
+      xir_item_price: { Args: { _item: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"

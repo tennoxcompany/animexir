@@ -155,7 +155,12 @@ function Index() {
           </div>
           {animes.isLoading ? <p className="text-muted-foreground">Yükleniyor...</p> : (
             <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {list.map((a) => <AnimeCard key={a.id} anime={a} episodes={a.episode_count} />)}
+              {list.slice(0, 20).map((a) => <AnimeCard key={a.id} anime={a} episodes={a.episode_count} />)}
+            </div>
+          )}
+          {list.length > 20 && (
+            <div className="mt-8 flex justify-center">
+              <Button asChild variant="hero" size="lg"><Link to="/animeler">Daha Fazla İzle</Link></Button>
             </div>
           )}
           {!animes.isLoading && list.length === 0 && <p className="text-muted-foreground">Bu filtreye uygun anime yok.</p>}
