@@ -25,9 +25,9 @@ export function useModerators() {
     staleTime: 60_000,
     retry: false,
     queryFn: async () => {
-      const { data, error } = await supabase.from("moderators").select("user_id");
+      const { data, error } = await supabase.rpc("public_moderator_ids");
       if (error) throw error;
-      return new Set((data ?? []).map((m) => m.user_id));
+      return new Set((data ?? []) as string[]);
     },
   });
 }
