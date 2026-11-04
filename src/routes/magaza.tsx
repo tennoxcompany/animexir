@@ -117,7 +117,7 @@ function Customizer({ username, disabled, onSaved }: { username?: string; disabl
   const save = async () => {
     setSaving(true);
     const { error } = await supabase.rpc("save_xir_cosmetics", {
-      _vip_badge: vip, _name_color: nameColor || null, _profile_theme: pt, _site_theme: st,
+      _vip_badge: vip, _name_color: (nameColor || null) as string, _profile_theme: pt, _site_theme: st,
     });
     setSaving(false);
     if (error) return toast.error(rpcError(error.message));
