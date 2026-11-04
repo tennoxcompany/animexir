@@ -42,6 +42,7 @@ jobs:
           touch .nojekyll
           curl -fsSL https://animexir.lovable.app/sitemap.xml | sed 's#https://animexir.lovable.app#https://animexir.duckdns.org#g' > sitemap.xml
       - run: bun scripts/static-pages.ts
+      - run: bun scripts/split-sitemap.ts
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist/client

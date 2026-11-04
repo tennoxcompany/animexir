@@ -3,5 +3,6 @@ Allow: /
 Disallow: /yonetim
 Disallow: /profil
 Disallow: /sifre-sifirla
+Disallow: /giris
 
 Sitemap: https://animexir.duckdns.org/sitemap.xml
