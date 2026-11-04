@@ -1,13 +1,14 @@
--- Topluluk #mod-kanali: yalnızca moderatörler ve yönetici okuyup yazabilir. Tekrar çalıştırılabilir.
-
-DROP POLICY IF EXISTS "community read" ON public.community_messages;
-CREATE POLICY "community read" ON public.community_messages FOR SELECT
-  USING (channel <> 'mod-kanali' OR public.is_staff(auth.uid()));
-
-DROP POLICY IF EXISTS "community insert" ON public.community_messages;
-CREATE POLICY "community insert" ON public.community_messages FOR INSERT TO authenticated
-  WITH CHECK (
-    auth.uid() = user_id AND public.can_chat(auth.uid())
-    AND (channel <> 'mod-kanali' OR public.is_staff(auth.uid()))
-    AND (body NOT ILIKE '/everyone%' OR public.has_role(auth.uid(), 'admin'))
-  );
+-- The content of this migration cannot be applied: its changes already exist in the database.
+-- -- Topluluk #mod-kanali: yalnızca moderatörler ve yönetici okuyup yazabilir. Tekrar çalıştırılabilir.
+-- 
+-- DROP POLICY IF EXISTS "community read" ON public.community_messages;
+-- CREATE POLICY "community read" ON public.community_messages FOR SELECT
+--   USING (channel <> 'mod-kanali' OR public.is_staff(auth.uid()));
+-- 
+-- DROP POLICY IF EXISTS "community insert" ON public.community_messages;
+-- CREATE POLICY "community insert" ON public.community_messages FOR INSERT TO authenticated
+--   WITH CHECK (
+--     auth.uid() = user_id AND public.can_chat(auth.uid())
+--     AND (channel <> 'mod-kanali' OR public.is_staff(auth.uid()))
+--     AND (body NOT ILIKE '/everyone%' OR public.has_role(auth.uid(), 'admin'))
+--   );
