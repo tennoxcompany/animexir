@@ -43,7 +43,7 @@ export function useAllCosmetics() {
     staleTime: 60_000,
     retry: false,
     queryFn: async () => {
-      const { data, error } = await supabase.from("user_cosmetics").select("user_id, owned, vip_badge, name_color, profile_theme, site_theme");
+      const { data, error } = await supabase.rpc("public_cosmetics");
       if (error) throw error;
       return new Map(((data ?? []) as unknown as Cosmetics[]).map((c) => [c.user_id, c]));
     },

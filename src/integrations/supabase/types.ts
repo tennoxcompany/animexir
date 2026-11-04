@@ -755,6 +755,18 @@ export type Database = {
         Args: { _minutes: number; _user_id: string }
         Returns: undefined
       }
+      public_cosmetics: {
+        Args: never
+        Returns: {
+          name_color: string
+          owned: string[]
+          profile_theme: Json
+          site_theme: Json
+          user_id: string
+          vip_badge: boolean
+        }[]
+      }
+      public_moderator_ids: { Args: never; Returns: string[] }
       save_push_subscription: {
         Args: { _auth: string; _endpoint: string; _p256dh: string }
         Returns: undefined
