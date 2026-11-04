@@ -65,11 +65,21 @@ export type SeoAnime = {
   banner_url: string | null;
   genres: string[] | null;
   has_dub: boolean | null;
+  anilist_id?: number | null;
 };
 
-export type SeoEpisode = { id: string; number: number; title: string | null; anime_id: string; created_at: string | null; animes: SeoAnime | null };
+export type SeoEpisode = { id: string; number: number; title: string | null; anime_id: string; created_at: string | null; video_url?: string | null; animes: SeoAnime | null };
 
-const ANIME_COLS = "id,title,description,cover_url,banner_url,genres,has_dub";
+const DIRECT_VIDEO = /\.(mp4|webm|ogg|mov|m3u8)(\?|$)/i;
+
+/** Bölümün izlenebilir video adresi: doğrudan dosya ise contentUrl, oynatıcı sayfası ise embedUrl. */
+export function episodeVideoUrls(ep: { number: number; video_url?: string | null; animes: { anilist_id?: number | null } | null }) {
+  if (ep.video_url) return DIRECT_VIDEO.test(ep.video_url) ? { contentUrl: ep.video_url } : { embedUrl: ep.video_url };
+  if (ep.animes?.anilist_id) return { embedUrl: `https://player.videasy.to/anime/${ep.animes.anilist_id}/${ep.number}` };
+  return {};
+}
+
+export const ANIME_COLS = "id,title,description,cover_url,banner_url,genres,has_dub,anilist_id";
 
 /** Arama motorları için kısa, düz metin açıklama üretir. */
 export function shortText(s: string | null | undefined, max = 155) {
@@ -91,7 +101,7 @@ export async function loadSeoEpisode(id: string): Promise<SeoEpisode | null> {
   try {
     const rows = await restSelect<SeoEpisode>(
       "episodes",
-      `select=id,number,title,anime_id,created_at,animes(${ANIME_COLS})&id=eq.${encodeURIComponent(id)}&limit=1`,
+      `select=id,number,title,anime_id,created_at,video_url,animes(${ANIME_COLS})&id=eq.${encodeURIComponent(id)}&limit=1`,
     );
     return rows[0] ?? null;
   } catch {
@@ -174,6 +184,7 @@ export function episodeHead(ep: SeoEpisode & { animes: SeoAnime }, image: string
           description,
           thumbnailUrl: thumb ? [thumb] : undefined,
           uploadDate: ep.created_at ?? undefined,
+          ...episodeVideoUrls(ep),
           inLanguage: "tr",
           url,
           isPartOf: { "@type": "TVSeries", name: a.title, url: animeUrl },

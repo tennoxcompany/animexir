@@ -5,11 +5,10 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import sharp from "sharp";
 import { restSelect } from "@/lib/rest";
-import { animeHead, animeParam, episodeHead, episodeParam, ogImageUrl, type SeoAnime, type SeoEpisode } from "@/lib/seo";
+import { ANIME_COLS, animeHead, animeParam, episodeHead, episodeParam, ogImageUrl, type SeoAnime, type SeoEpisode } from "@/lib/seo";
 
 const DIR = "dist/client";
 const ASSETS = "scripts/og-assets";
-const ANIME_COLS = "id,title,description,cover_url,banner_url,genres,has_dub";
 
 type Head = { meta: Record<string, string>[]; links: Record<string, string>[]; scripts?: { type: string; children: string }[] };
 
@@ -101,7 +100,7 @@ const custom = new Map<string, string>();
 try {
   mkdirSync(join(DIR, "og"), { recursive: true });
   const animes = await fetchAll<SeoAnime>("animes", `select=${ANIME_COLS}`);
-  const episodes = await fetchAll<SeoEpisode>("episodes", `select=id,number,title,anime_id,created_at,animes(${ANIME_COLS})`);
+  const episodes = await fetchAll<SeoEpisode>("episodes", `select=id,number,title,anime_id,created_at,video_url,animes(${ANIME_COLS})`);
   const withOg = new Set<string>();
   await pool(animes, 8, async (a) => {
     if (await makeOgImage(a).catch((e) => (console.warn("og", a.title, e?.message), false))) withOg.add(a.id);
