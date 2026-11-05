@@ -1,20 +1,10 @@
-import { useEffect, useState } from "react";
-import { ShieldCheck, Zap } from "lucide-react";
 import { getProgress, saveProgress } from "@/lib/progress";
 
 /** Direct .mp4/.webm/.m3u8 links use the native player; anything else (embed pages) uses an iframe. */
 const DIRECT = /\.(mp4|webm|ogg|mov|m3u8)(\?|$)/i;
 
-type Server = { name: string; tag: string; url: (anilistId: number, ep: number) => string };
-
-/** Embed servers keyed by AniList media id — used when the episode has no manual video link. */
-export const EMBED_SERVERS: Server[] = [
-  { name: "Sunucu 1 (Videasy)", tag: "Reklamsız / Önerilen", url: (id, ep) => `https://player.videasy.to/anime/${id}/${ep}` },
-  { name: "Sunucu 2 (VidLink)", tag: "Temiz", url: (id, ep) => `https://vidlink.pro/anime/${id}/${ep}/sub` },
-  { name: "Sunucu 3 (VidSrc)", tag: "Alternatif", url: (id, ep) => `https://vidsrc.sh/embed/anime/ani${id}/${ep}/sub` },
-  { name: "Sunucu 4 (Vidnest)", tag: "HD", url: (id, ep) => `https://vidnest.fun/anime/${id}/${ep}/sub` },
-  { name: "Sunucu 5 (Vidy)", tag: "Yedek", url: (id, ep) => `https://www.vidy.st/anime/${id}/${ep}?autoplay=true` },
-];
+/** Tek sunucu: Vidnest. AniList kimliğiyle çalışır — bölüme elle video linki eklenmemişse bu devreye girer. */
+const vidnestUrl = (anilistId: number, ep: number) => `https://vidnest.fun/anime/${anilistId}/${ep}/sub`;
 
 export function VideoPlayer({ url, title, k }: { url: string; title: string; k: string }) {
   if (DIRECT.test(url)) {
@@ -50,75 +40,37 @@ export function VideoPlayer({ url, title, k }: { url: string; title: string; k: 
   );
 }
 
-/** Sandbox without allow-popups blocks the ad tabs embed servers open; some servers refuse to play inside it. */
-const AD_SANDBOX = "allow-scripts allow-same-origin allow-presentation allow-forms";
-const AD_KEY = "axr-adblock";
+/** Sandbox without allow-popups permanently blocks the ad tabs the embed server tries to open on clicks. */
+const PLAYER_SANDBOX = "allow-scripts allow-same-origin allow-presentation allow-forms";
 
-/** Player with server switcher for AniList-based embeds (no manual link needed). */
+/** Vidnest player for AniList-based embeds (no manual link needed). Ads/popups are blocked by the sandbox. */
 export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; episode: number; title: string }) {
-  const [srv, setSrv] = useState(0);
-  const [adBlock, setAdBlock] = useState(true);
-  useEffect(() => {
-    if (localStorage.getItem(AD_KEY) === "off") setAdBlock(false);
-  }, []);
-  const toggleAd = () => {
-    const next = !adBlock;
-    setAdBlock(next);
-    localStorage.setItem(AD_KEY, next ? "on" : "off");
-  };
-  const s = EMBED_SERVERS[srv]!;
+  const src = vidnestUrl(anilistId, episode);
   return (
     <div>
       <div className="aspect-video overflow-hidden rounded-t-xl bg-black">
         <iframe
-          key={`${srv}-${episode}-${adBlock ? "a" : "n"}`}
-          src={s.url(anilistId, episode)}
+          key={`${anilistId}-${episode}`}
+          src={src}
           title={title}
           className="h-full w-full"
           allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
           allowFullScreen
-          {...(adBlock ? { sandbox: AD_SANDBOX } : {})}
+          sandbox={PLAYER_SANDBOX}
         />
       </div>
       <div className="flex flex-wrap items-center gap-2 rounded-b-xl border border-t-0 border-border bg-card p-3">
-        <span className="text-sm font-semibold text-muted-foreground">Sunucular:</span>
-        {EMBED_SERVERS.map((sv, i) => (
-          <button
-            key={sv.name}
-            onClick={() => setSrv(i)}
-            className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-              i === srv ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"
-            }`}
-          >
-            <Zap className="h-3.5 w-3.5" /> {sv.name}
-            <span className={`rounded px-1.5 py-0.5 text-[10px] ${i === srv ? "bg-black/20" : "bg-background"}`}>{sv.tag}</span>
-          </button>
-        ))}
+        <span className="text-sm font-semibold text-muted-foreground">Sunucu: Vidnest (HD)</span>
         <a
-          href={s.url(anilistId, episode)}
+          href={src}
           target="_blank"
           rel="noreferrer"
           className="ml-auto text-xs font-medium text-primary hover:underline"
         >
           Yeni sekmede aç ↗
         </a>
-        <div className="flex w-full items-center gap-3 rounded-lg bg-secondary/60 p-2">
-          <button
-            onClick={toggleAd}
-            className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
-              adBlock ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground"
-            }`}
-          >
-            <ShieldCheck className="h-4 w-4" /> Reklam engelleyici: {adBlock ? "Açık" : "Kapalı"}
-          </button>
-          <span className="text-xs text-muted-foreground">
-            {adBlock
-              ? "\"Disable sandbox\" hatası çıkarsa önce başka sunucu dene, olmazsa bunu kapat."
-              : "Kapalıyken tuşlara basınca reklam sayfası açılabilir — geri tuşuyla dön."}
-          </span>
-        </div>
         <p className="w-full text-xs text-muted-foreground">
-          "Bağlanmayı reddetti" / "IP adresine bağlanılamadı" görürsen başka sunucuya geç. Hepsinde oluyorsa internet sağlayıcın bu siteleri engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
+          Video yüklenmezse sayfayı yenile ya da yeni sekmede aç. "Bağlanmayı reddetti" görürsen internet sağlayıcın engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
         </p>
       </div>
     </div>
