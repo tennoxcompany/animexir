@@ -40,10 +40,7 @@ export function VideoPlayer({ url, title, k }: { url: string; title: string; k: 
   );
 }
 
-/** Sandbox without allow-popups permanently blocks the ad tabs the embed server tries to open on clicks. */
-const PLAYER_SANDBOX = "allow-scripts allow-same-origin allow-presentation allow-forms";
-
-/** Vidnest player for AniList-based embeds (no manual link needed). Ads/popups are blocked by the sandbox. */
+/** Vidnest player for AniList-based embeds. No sandbox: Vidnest refuses to play ("disable sandbox") when sandboxed. */
 export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; episode: number; title: string }) {
   const src = vidnestUrl(anilistId, episode);
   return (
@@ -56,7 +53,6 @@ export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; 
           className="h-full w-full"
           allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
           allowFullScreen
-          sandbox={PLAYER_SANDBOX}
         />
       </div>
       <div className="flex flex-wrap items-center gap-2 rounded-b-xl border border-t-0 border-border bg-card p-3">
@@ -70,7 +66,7 @@ export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; 
           Yeni sekmede aç ↗
         </a>
         <p className="w-full text-xs text-muted-foreground">
-          Video yüklenmezse sayfayı yenile ya da yeni sekmede aç. "Bağlanmayı reddetti" görürsen internet sağlayıcın engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
+          Reklam sekmesi açılırsa kapatıp geri dön, video devam eder. Video yüklenmezse sayfayı yenile ya da yeni sekmede aç. "Bağlanmayı reddetti" görürsen internet sağlayıcın engelliyordur — DNS'i 1.1.1.1 yap ya da Cloudflare WARP kullan.
         </p>
       </div>
     </div>
