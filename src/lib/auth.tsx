@@ -44,6 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from("moderators").select("user_id").eq("user_id", uid).maybeSingle(),
       supabase.from("user_sanctions").select("user_id, muted_until, banned").eq("user_id", uid).maybeSingle(),
     ]);
+    if (p && (p as { frozen_at?: string | null }).frozen_at) {
+      await supabase.from("profiles").update({ frozen_at: null }).eq("id", uid);
+      (p as { frozen_at?: string | null }).frozen_at = null;
+    }
     setProfile(p as Profile | null);
     setIsAdmin(!!r?.some((x) => x.role === "admin"));
     setIsMod(!!m);

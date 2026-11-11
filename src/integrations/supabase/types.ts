@@ -254,6 +254,30 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           addressee_id: string
@@ -304,6 +328,7 @@ export type Database = {
           banner_url: string | null
           bio: string | null
           created_at: string
+          frozen_at: string | null
           id: string
           username: string
         }
@@ -314,6 +339,7 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           created_at?: string
+          frozen_at?: string | null
           id: string
           username?: string
         }
@@ -324,6 +350,7 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           created_at?: string
+          frozen_at?: string | null
           id?: string
           username?: string
         }

@@ -42,7 +42,7 @@ function UserPage() {
   };
 
   useEffect(() => {
-    supabase.from("profiles").select("id, username, avatar_url, banner_url, bio, badge, accent_color").eq("id", id).maybeSingle()
+    supabase.from("profiles").select("id, username, avatar_url, banner_url, bio, badge, accent_color, frozen_at").eq("id", id).maybeSingle()
       .then(({ data }) => setP(data as P | null));
     supabase.from("friendships").select("id", { count: "exact", head: true }).eq("status", "accepted")
       .or(`requester_id.eq.${id},addressee_id.eq.${id}`).then(({ count }) => setFriends(count ?? 0));
@@ -58,6 +58,7 @@ function UserPage() {
   const remove = async () => { await supabase.from("friendships").delete().eq("id", f!.id); setF(null); };
 
   if (!p) return <div className="mx-auto max-w-4xl px-4 pt-28 text-muted-foreground">Yükleniyor...</div>;
+  if ((p as { frozen_at?: string | null }).frozen_at && userId !== id) return <div className="mx-auto max-w-4xl px-4 pt-28 text-muted-foreground">Bu hesap dondurulmuş.</div>;
   const accent = p.accent_color ?? "#e11d48";
 
   let action: React.ReactNode = null;

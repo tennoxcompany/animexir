@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AccountControls } from "@/components/AccountControls";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { AnimeCard } from "@/components/AnimeCard";
 import { UserBadge, UserName } from "@/components/UserName";
@@ -156,6 +157,7 @@ function ProfilePage() {
             </select>
             <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Hakkımda" />
             <Button data-testid="profile-save" variant="hero" onClick={save}>Kaydet</Button>
+            <AccountControls />
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5">
