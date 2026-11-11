@@ -153,6 +153,10 @@ function RootComponent() {
           <Outlet />
         </main>
         <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
+          <div className="mb-2 flex justify-center gap-4">
+            <Link to="/gizlilik" className="hover:text-foreground">Gizlilik Politikası</Link>
+            <Link to="/geri-bildirim" className="hover:text-foreground">Memnuniyet Anketi</Link>
+          </div>
           © 2026 AnimeXir & Tennox Company
         </footer>
         <Toaster theme="dark" />
