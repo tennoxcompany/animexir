@@ -3,6 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import { CoinChip, DmLink } from "@/components/HeaderXir";
+import { Settings } from "lucide-react";
 import { ProfileMenu } from "@/components/ProfileMenu";
 
 const links = [
@@ -37,6 +38,9 @@ export function Header() {
           {userId && <CoinChip />}
           {userId && <DmLink />}
           <NotificationBell userId={userId} />
+          {userId && (
+            <Link to="/ayarlar" aria-label="Ayarlar" className="rounded-md p-2 text-muted-foreground transition-colors hover:text-foreground"><Settings className="h-5 w-5" /></Link>
+          )}
           {userId ? (
             <ProfileMenu />
           ) : (
