@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnimelerRouteImport } from './routes/animeler'
 import { Route as BirlikteIzleRouteImport } from './routes/birlikte-izle'
+import { Route as GeriBildirimRouteImport } from './routes/geri-bildirim'
 import { Route as GirisRouteImport } from './routes/giris'
+import { Route as GizlilikRouteImport } from './routes/gizlilik'
 import { Route as MagazaRouteImport } from './routes/magaza'
 import { Route as MesajlarRouteImport } from './routes/mesajlar'
 import { Route as ProfilRouteImport } from './routes/profil'
@@ -44,9 +46,19 @@ const BirlikteIzleRoute = BirlikteIzleRouteImport.update({
   path: '/birlikte-izle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GeriBildirimRoute = GeriBildirimRouteImport.update({
+  id: '/geri-bildirim',
+  path: '/geri-bildirim',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GirisRoute = GirisRouteImport.update({
   id: '/giris',
   path: '/giris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GizlilikRoute = GizlilikRouteImport.update({
+  id: '/gizlilik',
+  path: '/gizlilik',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MagazaRoute = MagazaRouteImport.update({
@@ -129,7 +141,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/animeler': typeof AnimelerRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
+  '/geri-bildirim': typeof GeriBildirimRoute
   '/giris': typeof GirisRoute
+  '/gizlilik': typeof GizlilikRoute
   '/magaza': typeof MagazaRoute
   '/mesajlar': typeof MesajlarRoute
   '/profil': typeof ProfilRoute
@@ -150,7 +164,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/animeler': typeof AnimelerRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
+  '/geri-bildirim': typeof GeriBildirimRoute
   '/giris': typeof GirisRoute
+  '/gizlilik': typeof GizlilikRoute
   '/magaza': typeof MagazaRoute
   '/mesajlar': typeof MesajlarRoute
   '/profil': typeof ProfilRoute
@@ -172,7 +188,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/animeler': typeof AnimelerRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
+  '/geri-bildirim': typeof GeriBildirimRoute
   '/giris': typeof GirisRoute
+  '/gizlilik': typeof GizlilikRoute
   '/magaza': typeof MagazaRoute
   '/mesajlar': typeof MesajlarRoute
   '/profil': typeof ProfilRoute
@@ -195,7 +213,9 @@ export interface FileRouteTypes {
     | '/'
     | '/animeler'
     | '/birlikte-izle'
+    | '/geri-bildirim'
     | '/giris'
+    | '/gizlilik'
     | '/magaza'
     | '/mesajlar'
     | '/profil'
@@ -216,7 +236,9 @@ export interface FileRouteTypes {
     | '/'
     | '/animeler'
     | '/birlikte-izle'
+    | '/geri-bildirim'
     | '/giris'
+    | '/gizlilik'
     | '/magaza'
     | '/mesajlar'
     | '/profil'
@@ -237,7 +259,9 @@ export interface FileRouteTypes {
     | '/'
     | '/animeler'
     | '/birlikte-izle'
+    | '/geri-bildirim'
     | '/giris'
+    | '/gizlilik'
     | '/magaza'
     | '/mesajlar'
     | '/profil'
@@ -259,7 +283,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnimelerRoute: typeof AnimelerRoute
   BirlikteIzleRoute: typeof BirlikteIzleRoute
+  GeriBildirimRoute: typeof GeriBildirimRoute
   GirisRoute: typeof GirisRoute
+  GizlilikRoute: typeof GizlilikRoute
   MagazaRoute: typeof MagazaRoute
   MesajlarRoute: typeof MesajlarRoute
   ProfilRoute: typeof ProfilRoute
@@ -300,11 +326,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BirlikteIzleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/geri-bildirim': {
+      id: '/geri-bildirim'
+      path: '/geri-bildirim'
+      fullPath: '/geri-bildirim'
+      preLoaderRoute: typeof GeriBildirimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/giris': {
       id: '/giris'
       path: '/giris'
       fullPath: '/giris'
       preLoaderRoute: typeof GirisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gizlilik': {
+      id: '/gizlilik'
+      path: '/gizlilik'
+      fullPath: '/gizlilik'
+      preLoaderRoute: typeof GizlilikRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/magaza': {
@@ -419,7 +459,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnimelerRoute: AnimelerRoute,
   BirlikteIzleRoute: BirlikteIzleRoute,
+  GeriBildirimRoute: GeriBildirimRoute,
   GirisRoute: GirisRoute,
+  GizlilikRoute: GizlilikRoute,
   MagazaRoute: MagazaRoute,
   MesajlarRoute: MesajlarRoute,
   ProfilRoute: ProfilRoute,
