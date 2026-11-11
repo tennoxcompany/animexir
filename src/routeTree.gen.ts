@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnimelerRouteImport } from './routes/animeler'
+import { Route as AyarlarRouteImport } from './routes/ayarlar'
 import { Route as BirlikteIzleRouteImport } from './routes/birlikte-izle'
 import { Route as GeriBildirimRouteImport } from './routes/geri-bildirim'
 import { Route as GirisRouteImport } from './routes/giris'
@@ -39,6 +40,11 @@ const IndexRoute = IndexRouteImport.update({
 const AnimelerRoute = AnimelerRouteImport.update({
   id: '/animeler',
   path: '/animeler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AyarlarRoute = AyarlarRouteImport.update({
+  id: '/ayarlar',
+  path: '/ayarlar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BirlikteIzleRoute = BirlikteIzleRouteImport.update({
@@ -140,6 +146,7 @@ const ApiPushKeyRoute = ApiPushKeyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/animeler': typeof AnimelerRoute
+  '/ayarlar': typeof AyarlarRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/geri-bildirim': typeof GeriBildirimRoute
   '/giris': typeof GirisRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/animeler': typeof AnimelerRoute
+  '/ayarlar': typeof AyarlarRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/geri-bildirim': typeof GeriBildirimRoute
   '/giris': typeof GirisRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/animeler': typeof AnimelerRoute
+  '/ayarlar': typeof AyarlarRoute
   '/birlikte-izle': typeof BirlikteIzleRoute
   '/geri-bildirim': typeof GeriBildirimRoute
   '/giris': typeof GirisRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/animeler'
+    | '/ayarlar'
     | '/birlikte-izle'
     | '/geri-bildirim'
     | '/giris'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/animeler'
+    | '/ayarlar'
     | '/birlikte-izle'
     | '/geri-bildirim'
     | '/giris'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/animeler'
+    | '/ayarlar'
     | '/birlikte-izle'
     | '/geri-bildirim'
     | '/giris'
@@ -282,6 +294,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnimelerRoute: typeof AnimelerRoute
+  AyarlarRoute: typeof AyarlarRoute
   BirlikteIzleRoute: typeof BirlikteIzleRoute
   GeriBildirimRoute: typeof GeriBildirimRoute
   GirisRoute: typeof GirisRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/animeler'
       fullPath: '/animeler'
       preLoaderRoute: typeof AnimelerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ayarlar': {
+      id: '/ayarlar'
+      path: '/ayarlar'
+      fullPath: '/ayarlar'
+      preLoaderRoute: typeof AyarlarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/birlikte-izle': {
@@ -458,6 +478,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnimelerRoute: AnimelerRoute,
+  AyarlarRoute: AyarlarRoute,
   BirlikteIzleRoute: BirlikteIzleRoute,
   GeriBildirimRoute: GeriBildirimRoute,
   GirisRoute: GirisRoute,
