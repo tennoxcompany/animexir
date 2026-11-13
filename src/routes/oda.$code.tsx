@@ -48,7 +48,8 @@ function Room() {
 
   useEffect(() => {
     if (!room) return;
-    supabase.from("room_messages").select("*, profiles(username)").eq("room_id", room.id).order("created_at").limit(100)
+    (userId ? supabase.from("room_members").upsert({ room_id: room.id, user_id: userId }, { onConflict: "room_id,user_id", ignoreDuplicates: true }) : Promise.resolve(null))
+      .then(() => supabase.from("room_messages").select("*, profiles(username)").eq("room_id", room.id).order("created_at").limit(100))
       .then(({ data }) => setMsgs((data ?? []).map((m: any) => ({ ...m, username: m.profiles?.username }))));
 
     const ch = supabase.channel(`room:${room.id}`, { config: { presence: { key: userId ?? `guest-${Math.random()}` } } });
