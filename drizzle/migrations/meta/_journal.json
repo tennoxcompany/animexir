@@ -92,6 +92,13 @@
       "when": 1794422072994,
       "tag": "0012_privacy_feedback_freeze",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794589317794,
+      "tag": "0013_room_members",
+      "breakpoints": true
     }
   ]
 }
