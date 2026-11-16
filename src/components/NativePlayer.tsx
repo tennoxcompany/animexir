@@ -104,8 +104,8 @@ export function NativePlayer({ url, title, k }: { url: string; title: string; k:
             const element = e.currentTarget;
             setTime(element.currentTime);
             const second = Math.floor(element.currentTime);
-            if (second % 5 === 0 && element.dataset.saved !== String(second)) {
-              element.dataset.saved = String(second);
+            if (second % 5 === 0 && element.dataset["saved"] !== String(second)) {
+              element.dataset["saved"] = String(second);
               saveProgress(k, element.currentTime, element.duration);
             }
           }}
