@@ -34,10 +34,16 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+  --color-player: var(--player);
+  --color-player-controls: var(--player-controls);
+  --color-player-foreground: var(--player-foreground);
 }
 
 :root {
   --radius: 0.75rem;
+  --player: oklch(0.08 0 0);
+  --player-controls: oklch(0.16 0.005 20);
+  --player-foreground: oklch(0.98 0 0);
   --background: oklch(0.13 0.008 20);
   --foreground: oklch(0.96 0.005 60);
   --card: oklch(0.18 0.01 20);

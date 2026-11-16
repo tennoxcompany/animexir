@@ -1,32 +1,11 @@
-import { getProgress, saveProgress } from "@/lib/progress";
-
-/** Direct .mp4/.webm/.m3u8 links use the native player; anything else (embed pages) uses an iframe. */
-const DIRECT = /\.(mp4|webm|ogg|mov|m3u8)(\?|$)/i;
+import { NativePlayer } from "@/components/NativePlayer";
+import { isDirectVideo } from "@/lib/player";
 
 /** Tek sunucu: Vidnest. AniList kimliğiyle çalışır — bölüme elle video linki eklenmemişse bu devreye girer. */
 const vidnestUrl = (anilistId: number, ep: number) => `https://vidnest.fun/anime/${anilistId}/${ep}/sub`;
 
 export function VideoPlayer({ url, title, k }: { url: string; title: string; k: string }) {
-  if (DIRECT.test(url)) {
-    return (
-      <video key={k} src={url} controls autoPlay className="h-full w-full" data-testid="episode-video"
-        onLoadedMetadata={(e) => {
-          const p = getProgress(k);
-          if (p && p.t / p.d < 0.95) e.currentTarget.currentTime = p.t;
-        }}
-        onTimeUpdate={(e) => {
-          const v = e.currentTarget;
-          const s = Math.floor(v.currentTime);
-          if (s % 5 === 0 && v.dataset["saved"] !== String(s)) {
-            v.dataset["saved"] = String(s);
-            saveProgress(k, v.currentTime, v.duration);
-          }
-        }}
-        onPause={(e) => saveProgress(k, e.currentTarget.currentTime, e.currentTarget.duration)}
-        onEnded={(e) => saveProgress(k, e.currentTarget.duration, e.currentTarget.duration)}
-      />
-    );
-  }
+  if (isDirectVideo(url)) return <NativePlayer key={`${k}-${url}`} url={url} title={title} k={k} />;
   return (
     <iframe
       key={k}
@@ -45,7 +24,7 @@ export function EmbedPlayer({ anilistId, episode, title }: { anilistId: number; 
   const src = vidnestUrl(anilistId, episode);
   return (
     <div>
-      <div className="aspect-video overflow-hidden rounded-t-xl bg-black">
+      <div className="aspect-video overflow-hidden rounded-t-xl bg-player">
         <iframe
           key={`${anilistId}-${episode}`}
           src={src}
