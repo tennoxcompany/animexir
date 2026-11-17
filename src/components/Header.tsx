@@ -18,11 +18,11 @@ export function Header() {
   const { isAdmin, userId } = useAuth();
   return (
     <header className="glass fixed inset-x-0 top-0 z-50 border-b border-border">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
-        <Link to="/" className="font-display text-xl font-bold tracking-tight">
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 md:flex md:gap-4">
+        <Link to="/" className="min-w-0 shrink-0 font-display text-xl font-extrabold sm:text-2xl">
           Anime<span className="text-primary">Xir</span>
         </Link>
-        <nav className="hidden gap-1 md:flex">
+        <nav className="hidden min-w-0 gap-1 lg:flex">
           {links.map((l) => (
             <Link key={l.to} to={l.to} activeOptions={{ exact: l.to === "/" }}
               className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -34,7 +34,7 @@ export function Header() {
             <Link to="/yonetim" className="rounded-md px-3 py-2 text-sm text-gold" >Yönetim</Link>
           )}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
           {userId && <CoinChip />}
           {userId && <DmLink />}
           <NotificationBell userId={userId} />
@@ -48,7 +48,7 @@ export function Header() {
           )}
         </div>
       </div>
-      <nav className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
+      <nav className="flex gap-1 overflow-x-auto px-4 pb-2 lg:hidden">
         {links.map((l) => (
           <Link key={l.to} to={l.to} activeOptions={{ exact: l.to === "/" }}
             className="whitespace-nowrap rounded-full bg-secondary px-3 py-1 text-xs text-muted-foreground"

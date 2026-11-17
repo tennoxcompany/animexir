@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Play, Users, Search } from "lucide-react";
+import { Search, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimeCard } from "@/components/AnimeCard";
 import { GenreLinks } from "@/components/GenreLinks";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { TodayStrip } from "@/components/TodayStrip";
+import { FeaturedShowcase } from "@/components/FeaturedShowcase";
 import { fetchAnimes, fetchLatestEpisodes, GENRES } from "@/lib/data";
 import { animeParam, episodeParam, LOGO_URL, OG_IMAGE, pageHead, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/seo";
 
@@ -65,45 +66,23 @@ function Index() {
     return l;
   }, [animes.data, genre, sort, q]);
 
-  const hero = animes.data?.find((a) => a.featured) ?? animes.data?.[0];
+  const featured = (animes.data ?? []).filter((a) => a.featured);
+  const showcase = featured.length ? featured : (animes.data ?? []).slice(0, 1);
 
   return (
     <div>
-      {hero && (
-        <section className="relative h-[78vh] min-h-[520px] overflow-hidden">
-          <img src={hero.banner_url ?? hero.cover_url ?? ""} alt={hero.title} className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-side" />
-          <div className="absolute inset-0 bg-fade" />
-          <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-end px-4 pb-20">
-            <div className="mb-4 flex flex-wrap gap-2 text-xs">
-              <span className="rounded-full bg-primary px-3 py-1 font-semibold text-primary-foreground">Günün Öne Çıkanı</span>
-              <span className="rounded-full glass px-3 py-1">Full HD 1080p</span>
-              <span className="rounded-full glass px-3 py-1 text-gold">★ {hero.score}</span>
-            </div>
-            <p className="max-w-2xl text-5xl font-extrabold leading-none md:text-7xl">{hero.title}</p>
-            <p className="mt-4 line-clamp-3 max-w-xl text-muted-foreground">{hero.description}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild variant="hero" size="lg">
-                <Link to="/anime/$id" params={{ id: animeParam(hero.id, hero.title) }}><Play className="fill-current" /> Hemen İzle</Link>
-              </Button>
-              <Button asChild variant="glass" size="lg">
-                <Link to="/birlikte-izle"><Users /> Birlikte İzle</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
+      <FeaturedShowcase animes={showcase} />
 
-      <div className="mx-auto max-w-7xl space-y-16 px-4 py-12">
+      <div className="mx-auto max-w-7xl space-y-12 px-5 py-8 sm:px-8">
         <ContinueWatching />
         <TodayStrip />
         {!!latest.data?.length && (
           <section>
-            <h2 className="mb-5 text-2xl font-bold">Son Eklenen Bölümler</h2>
+            <div className="mb-5 flex items-center justify-between gap-3"><h2 className="text-xl font-bold sm:text-2xl">Son Eklenen Bölümler</h2><Link to="/takvim" className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground hover:text-primary">Takvim<ArrowUpRight className="h-4 w-4" /></Link></div>
             <div className="flex gap-4 overflow-x-auto pb-2">
               {latest.data.map((e) => (
                 <Link key={e.id} to="/izle/$episodeId" params={{ episodeId: episodeParam(e.id, e.animes?.title, e.number) }} className="group w-64 shrink-0">
-                  <div className="relative aspect-video overflow-hidden rounded-xl bg-card">
+                  <div className="relative aspect-video overflow-hidden rounded-lg bg-card">
                     {e.animes?.cover_url && <img src={e.animes.cover_url} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />}
                     <div className="absolute inset-0 bg-fade" />
                     <span className="absolute bottom-2 left-3 text-sm font-semibold">{e.number}. Bölüm · <span className="text-primary">YENİ</span></span>
@@ -115,26 +94,24 @@ function Index() {
           </section>
         )}
 
-        <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-12">
-          <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-gradient-primary opacity-20 blur-3xl" />
-          <h2 className="relative text-3xl font-bold">Arkadaşlarınla aynı anda izle</h2>
-          <p className="relative mt-2 max-w-lg text-muted-foreground">Oda kur, kodu paylaş, aynı saniyede izleyip canlı sohbet edin.</p>
-          <div className="relative mt-6 flex flex-wrap gap-3">
+        <section className="border-y border-border py-8 sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <h2 className="text-xl font-bold sm:text-2xl">Arkadaşlarınla aynı anda izle</h2>
+          <div className="mt-4 flex flex-wrap gap-3 sm:mt-0">
             <Button asChild variant="hero"><Link to="/birlikte-izle">Oda Oluştur</Link></Button>
             <Button asChild variant="glass"><Link to="/topluluk">Topluluk Sohbeti</Link></Button>
           </div>
         </section>
 
         <section>
-          <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-            <div>
+          <div className="mb-5 grid min-w-0 gap-4 sm:flex sm:items-end sm:justify-between">
+            <div className="min-w-0">
               <h2 className="text-2xl font-bold">Anime Kataloğu</h2>
               <p className="text-sm text-muted-foreground">{list.length} anime listeleniyor</p>
             </div>
-            <div className="flex gap-2">
-              <div className="relative">
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2">
+              <div className="relative min-w-0">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Anime ara..." className="w-48 pl-9" />
+                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Anime ara..." className="w-full pl-9 sm:w-48" />
               </div>
               <select value={sort} onChange={(e) => setSort(e.target.value as Sort)}
                 className="h-9 rounded-md border border-input bg-background px-3 text-sm">
@@ -147,10 +124,9 @@ function Index() {
           </div>
           <div className="mb-6 flex flex-wrap gap-2">
             {[null, ...GENRES].map((g) => (
-              <button key={g ?? "all"} onClick={() => setGenre(g)}
-                className={`rounded-full px-4 py-1.5 text-sm transition-colors ${genre === g ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+              <Button key={g ?? "all"} onClick={() => setGenre(g)} variant={genre === g ? "default" : "secondary"} size="sm" className="rounded-full">
                 {g ?? "Tümü"}
-              </button>
+              </Button>
             ))}
           </div>
           {animes.isLoading ? <p className="text-muted-foreground">Yükleniyor...</p> : (
