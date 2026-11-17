@@ -1,3 +1,23 @@
+/** Accept a video URL or the src of an iframe, never executable embed markup. */
+export function normalizeVideoSource(input: string) {
+  const value = input.trim();
+  if (!value) return "";
+  let source = value;
+  if (value.startsWith("<")) {
+    if (!/^<iframe\b/i.test(value)) throw new Error("Yalnızca bölüm bağlantısı veya iframe gömme kodu ekleyebilirsin.");
+    const opening = value.match(/^<iframe\b[^>]*>/i)?.[0];
+    const match = opening?.match(/\ssrc\s*=\s*(["'])(.*?)\1/i);
+    if (!match?.[2]) throw new Error("Gömme kodunda geçerli bir src bağlantısı bulunamadı.");
+    source = match[2].replace(/&amp;/gi, "&").trim();
+  }
+  let parsed: URL;
+  try { parsed = new URL(source); } catch { throw new Error("Geçerli bir HTTPS bölüm bağlantısı ekle."); }
+  if (parsed.protocol !== "https:" || parsed.username || parsed.password) {
+    throw new Error("Bölüm bağlantısı HTTPS ile başlamalı ve kullanıcı bilgisi içermemeli.");
+  }
+  return parsed.href;
+}
+
 export function isDirectVideo(url: string) {
   return /\.(mp4|webm|ogg|mov|m3u8)(?:[?#]|$)/i.test(url);
 }
