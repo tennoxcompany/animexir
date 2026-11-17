@@ -131,7 +131,7 @@ function Admin() {
             <Input placeholder="Bölüm başlığı" value={ep.title} onChange={(e) => setEp({ ...ep, title: e.target.value })} />
           </div>
           <label htmlFor="episode-source" className="block text-sm font-medium">Bölüm bağlantısı / gömme kodu</label>
-          <Textarea id="episode-source" placeholder="https://… veya <iframe src=\"https://…\"></iframe>" value={ep.video_url} onChange={(e) => setEp({ ...ep, video_url: e.target.value })} />
+          <Textarea id="episode-source" placeholder={'https://… veya <iframe src="https://…"></iframe>'} value={ep.video_url} onChange={(e) => setEp({ ...ep, video_url: e.target.value })} />
           <Button variant="hero" onClick={addEp}>Kaydet</Button>
           <div className="max-h-64 space-y-1 overflow-y-auto pt-2">
             {eps.data?.map((e) => (
