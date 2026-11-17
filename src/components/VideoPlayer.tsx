@@ -1,15 +1,20 @@
 import { NativePlayer } from "@/components/NativePlayer";
-import { isDirectVideo } from "@/lib/player";
+import { isDirectVideo, normalizeVideoSource } from "@/lib/player";
 
 /** Tek sunucu: Vidnest. AniList kimliğiyle çalışır — bölüme elle video linki eklenmemişse bu devreye girer. */
 const vidnestUrl = (anilistId: number, ep: number) => `https://vidnest.fun/anime/${anilistId}/${ep}/sub`;
 
 export function VideoPlayer({ url, title, k }: { url: string; title: string; k: string }) {
-  if (isDirectVideo(url)) return <NativePlayer key={`${k}-${url}`} url={url} title={title} k={k} />;
+  let source: string;
+  try { source = normalizeVideoSource(url); } catch {
+    return <div className="flex h-full items-center justify-center p-4 text-center text-muted-foreground">Bu bölümün video bağlantısı geçerli değil.</div>;
+  }
+  if (!source) return <div className="flex h-full items-center justify-center text-muted-foreground">Bu bölüm yakında eklenecek.</div>;
+  if (isDirectVideo(source)) return <NativePlayer key={`${k}-${source}`} url={source} title={title} k={k} />;
   return (
     <iframe
-      key={k}
-      src={url}
+      key={`${k}-${source}`}
+      src={source}
       title={title}
       className="h-full w-full"
       allow="autoplay; fullscreen; encrypted-media; picture-in-picture"

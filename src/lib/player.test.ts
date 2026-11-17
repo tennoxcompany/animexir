@@ -1,5 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { isDirectVideo, isHlsVideo, playerTime, subtitleToVtt } from "./player";
+import { isDirectVideo, isHlsVideo, normalizeVideoSource, playerTime, subtitleToVtt } from "./player";
+
+describe("episode links and embed codes", () => {
+  it("extracts only the HTTPS source from an iframe", () => {
+    expect(normalizeVideoSource('<iframe src="https://example.org/embed/bolum-1?lang=tr&amp;quality=hd" onload="alert(1)"></iframe>'))
+      .toBe("https://example.org/embed/bolum-1?lang=tr&quality=hd");
+  });
+  it("keeps direct video links playable and permits clearing a source", () => {
+    expect(normalizeVideoSource(" https://example.org/turkce.mp4 ")).toBe("https://example.org/turkce.mp4");
+    expect(normalizeVideoSource("  ")).toBe("");
+  });
+  it("rejects executable sources and markup without an iframe source", () => {
+    for (const source of ["javascript:alert(1)", "data:text/html,test", "http://example.org/video", '<script src="https://example.org/a"></script>', '<iframe srcdoc="test"></iframe>', '<iframe src="javascript:alert(1)"></iframe>', "https://user:password@example.org/video"]) {
+      expect(() => normalizeVideoSource(source)).toThrow();
+    }
+  });
+});
 
 describe("video sources", () => {
   it("recognizes direct MP4 and HLS links without treating embed pages as video", () => {

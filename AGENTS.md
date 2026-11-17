@@ -11,3 +11,4 @@
 
 - Direct video playback uses NativePlayer with browser video and lazily imported hls.js; embed sources remain isolated iframes because cross-origin playback cannot be controlled.
 - User-selected SRT/VTT subtitles are converted to temporary browser-only VTT object URLs and revoked on replacement/unmount; selecting a subtitle does not publish it to other viewers.
+- Episode source inputs accept HTTPS URLs or extract only the HTTPS src from iframe markup through the shared player normalizer; never render supplied HTML, so embedded scripts cannot enter the app.
