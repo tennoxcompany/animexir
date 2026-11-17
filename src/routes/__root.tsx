@@ -97,9 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "AnimeXir" },
       { name: "theme-color", content: "#000000" },
       { property: "og:locale", content: "tr_TR" },
-      { property: "og:image", content: OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -149,7 +147,7 @@ function RootComponent() {
       <AuthProvider>
         <BanGate>
         <Header />
-        <main className="min-h-screen pt-16">
+        <main className="min-h-screen pt-[100px] lg:pt-16">
           <Outlet />
         </main>
         <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">

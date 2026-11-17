@@ -69,6 +69,7 @@
   --gradient-fade: linear-gradient(to top, var(--background) 0%, color-mix(in oklab, var(--background) 70%, transparent) 40%, transparent 100%);
   --gradient-side: linear-gradient(to right, var(--background) 0%, color-mix(in oklab, var(--background) 60%, transparent) 50%, transparent 100%);
   --shadow-glow: 0 10px 40px -10px color-mix(in oklab, var(--primary) 60%, transparent);
+  --gradient-showcase: linear-gradient(90deg, color-mix(in oklab, var(--background) 90%, transparent), color-mix(in oklab, var(--background) 40%, transparent) 55%, transparent), linear-gradient(0deg, var(--background), transparent 65%);
 }
 
 @layer base {
@@ -78,14 +79,32 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0; }
 }
 
 @utility bg-gradient-primary { background-image: var(--gradient-primary); }
 @utility bg-fade { background-image: var(--gradient-fade); }
 @utility bg-side { background-image: var(--gradient-side); }
+@utility bg-showcase { background-image: var(--gradient-showcase); }
 @utility shadow-glow { box-shadow: var(--shadow-glow); }
 @utility glass {
   background: color-mix(in oklab, var(--background) 70%, transparent);
   backdrop-filter: blur(14px);
+}
+
+.featured-showcase { height: min(660px, calc(100svh - 130px)); min-height: 490px; }
+.featured-showcase > .comment-ticker + div { height: calc(100% - 48px); }
+.featured-image { animation: showcase-reveal 650ms ease-out; }
+.ticker-track { animation: comments-scroll 90s linear infinite; }
+.comment-ticker:hover .ticker-track, .comment-ticker:focus-within .ticker-track { animation-play-state: paused; }
+@keyframes comments-scroll { to { transform: translateX(-50%); } }
+@keyframes showcase-reveal { from { opacity: 0.5; } to { opacity: 1; } }
+@media (max-width: 639px) {
+  .featured-showcase { height: auto; min-height: 470px; }
+  .featured-showcase > div:last-child { min-height: 440px; padding-top: 80px; }
+  .featured-image { object-position: 65% center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track, .featured-image { animation: none; }
+  .comment-ticker { overflow-x: auto; }
 }
